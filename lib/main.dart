@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:expandable_bottom_sheet/expandable_bottom_sheet.dart';
 // import 'package:storyswiper/storyswiper.dart';
-// import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 void main() {
   runApp(const MyApp());
@@ -909,6 +909,29 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 child: Column(
                     children: [
+                      Row(
+                          children: [
+                            NeumorphicButton(
+                                margin: const EdgeInsets.only(top: 12),
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pushReplacement(MaterialPageRoute(builder: (context) {
+                                    return const MyHomePage(title: '',);
+                                  }));
+                                },
+                                style: NeumorphicStyle(
+                                  shape: NeumorphicShape.flat,
+                                  boxShape:
+                                  NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
+                                  //border: NeumorphicBorder()
+                                ),
+                                padding: const EdgeInsets.all(12.0),
+                                child: const Text(
+                                  "Go to full sample",
+                                  style: TextStyle(color: Colors.grey),
+                                )),
+                          ]
+                      ),
                       Row(
                           children: [
                             const Text("Температура"),
