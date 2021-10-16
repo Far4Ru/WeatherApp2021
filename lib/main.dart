@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:expandable_bottom_sheet/expandable_bottom_sheet.dart';
 // import 'package:storyswiper/storyswiper.dart';
-// import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 void main() {
   runApp(const MyApp());
@@ -135,26 +135,36 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Container(
             margin: const EdgeInsets.only(top: 42, left: 20),
-            child: MaterialButton(
-              color: Colors.blueAccent,
+            child: NeumorphicButton(
               onPressed: () => _scaffoldKey.currentState?.openDrawer(),
               child: const Icon(
                 Icons.dehaze,
                 color: Colors.white,
               ),
-              shape: const CircleBorder(),
+              style: const NeumorphicStyle(
+                shape: NeumorphicShape.flat,
+                boxShape: NeumorphicBoxShape.circle(),
+                depth: 1,
+                color: Color(0xFF0256FF),
+                lightSource: LightSource.top,
+              ),
             ),
           ),
           Container(
             margin: const EdgeInsets.only(top:42, left: 340),
-            child: MaterialButton(
-              color: Colors.blueAccent,
+            child: NeumorphicButton(
               onPressed: () => _toSearchPage(context),
               child: const Icon(
                 Icons.add_circle_outline,
                 color: Colors.white,
               ),
-              shape: const CircleBorder(),
+              style: const NeumorphicStyle(
+                shape: NeumorphicShape.flat,
+                boxShape: NeumorphicBoxShape.circle(),
+                depth: 1,
+                color: Color(0xFF0256FF),
+                lightSource: LightSource.top,
+              ),
             ),
           ),
           Positioned(
@@ -853,6 +863,9 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  int _temperatureSelectedIndex = 0;
+  int _windStrengthSelectedIndex = 0;
+  int _pressureSelectedIndex = 0;
   bool isTempSwitched=false;
 
   @override
@@ -900,31 +913,121 @@ class _SettingsPageState extends State<SettingsPage> {
                   Row(
                     children: [
                       const Text("Температура"),
-                      Switch(value: isTempSwitched, onChanged: (value) {
-                        setState(() {
-                          isTempSwitched = value;
-                        });
-                      })
+                      Expanded(
+                        child: NeumorphicToggle(
+                          height: 40,
+                          selectedIndex: _temperatureSelectedIndex,
+                          displayForegroundOnlyIfSelected: true,
+                          children: [
+                            ToggleElement(
+                              background: const Center(child:  Text("\u00B0C", style: TextStyle(fontWeight: FontWeight.w500),)),
+                              foreground: const Center(child: Text("\u00B0C", style:  TextStyle(fontWeight: FontWeight.w700, color: Colors.white),)),
+                            ),
+                            ToggleElement(
+                              background: const Center(child: Text("\u00B0F", style:  TextStyle(fontWeight: FontWeight.w500),)),
+                              foreground: const Center(child:  Text("\u00B0F", style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white),)),
+                            ),
+                          ],
+                          thumb: Neumorphic(
+                            style: NeumorphicStyle(
+                              color: const Color(0xFF4B5F88),
+                              boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              _temperatureSelectedIndex = value;
+                              // print("_firstSelected: $_selectedIndex");
+                            });
+                          },
+                          style: NeumorphicToggleStyle(
+                            disableDepth: true,
+                            borderRadius: BorderRadius.circular(40),
+                            // lightSource: LightSource.top,
+                            backgroundColor: const Color(0xFFE2EBFF),
+                          ),
+                        ),
+                      )
                     ]
                   ),
                   Row(
                     children: [
                       const Text("Сила ветра"),
-                      Switch(value: isTempSwitched, onChanged: (value) {
-                        setState(() {
-                          isTempSwitched = value;
-                        });
-                      })
+                      Expanded(
+                        child: NeumorphicToggle(
+                          height: 40,
+                          selectedIndex: _windStrengthSelectedIndex,
+                          displayForegroundOnlyIfSelected: true,
+                          children: [
+                            ToggleElement(
+                              background: const Center(child:  Text("м/с", style: TextStyle(fontWeight: FontWeight.w500),)),
+                              foreground: const Center(child: Text("м/с", style:  TextStyle(fontWeight: FontWeight.w700, color: Colors.white),)),
+                            ),
+                            ToggleElement(
+                              background: const Center(child: Text("км/ч", style:  TextStyle(fontWeight: FontWeight.w500),)),
+                              foreground: const Center(child:  Text("км/ч", style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white),)),
+                            ),
+                          ],
+                          thumb: Neumorphic(
+                            style: NeumorphicStyle(
+                              color: const Color(0xFF4B5F88),
+                              boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              _windStrengthSelectedIndex = value;
+                              // print("_firstSelected: $_selectedIndex");
+                            });
+                          },
+                          style: NeumorphicToggleStyle(
+                            disableDepth: true,
+                            borderRadius: BorderRadius.circular(40),
+                            // lightSource: LightSource.top,
+                            backgroundColor: const Color(0xFFE2EBFF),
+                          ),
+                        ),
+                      )
                     ]
                   ),
                   Row(
                     children: [
                       const Text("Давление"),
-                      Switch(value: isTempSwitched, onChanged: (value) {
-                        setState(() {
-                          isTempSwitched = value;
-                        });
-                      })
+                      Expanded(
+                        child: NeumorphicToggle(
+                          height: 40,
+                          selectedIndex: _pressureSelectedIndex,
+                          displayForegroundOnlyIfSelected: true,
+                          children: [
+                            ToggleElement(
+                              background: const Center(child:  Text("мм.рт.ст.", style: TextStyle(fontWeight: FontWeight.w500),)),
+                              foreground: const Center(child: Text("мм.рт.ст.", style:  TextStyle(fontWeight: FontWeight.w700, color: Colors.white),)),
+                            ),
+                            ToggleElement(
+                              background: const Center(child: Text("гПа", style:  TextStyle(fontWeight: FontWeight.w500),)),
+                              foreground: const Center(child:  Text("гПа", style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white),)),
+                            ),
+                          ],
+                          thumb: Neumorphic(
+                            style: NeumorphicStyle(
+                              color: const Color(0xFF4B5F88),
+                              boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              _pressureSelectedIndex = value;
+                              // print("_firstSelected: $_selectedIndex");
+                            });
+                          },
+                          style: NeumorphicToggleStyle(
+                            disableDepth: true,
+                            borderRadius: BorderRadius.circular(40),
+                            // lightSource: LightSource.top,
+                            backgroundColor: const Color(0xFFE2EBFF),
+                          ),
+                        ),
+                      )
                     ]
                   ),
                 ]
