@@ -9,6 +9,8 @@ git init
 
 git remote add origin <.git>
 
+Диспетчер учетных данных
+
 ###  flutter
 
 git clone https://github.com/flutter/flutter.git -b stable
