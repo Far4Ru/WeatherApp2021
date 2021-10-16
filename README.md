@@ -13,7 +13,7 @@
 <details>
   <summary>Git</summary>
 
-  > Git
+  > Git 2.33.1
   
 ### Инициализация
 
