@@ -1,24 +1,70 @@
 # Weather App
 
-[курс](https://gitlab.com/Erthela/fourth-mobile-dev)
+
+## Фронтенд
+
+> Flutter
+
+* flutter_neumorphic 3.1.0
 
 
-### git
+## Установка
 
-git init
+<details>
+  <summary>Git</summary>
 
-git remote add origin <.git>
+  > Git
+  
+### Инициализация
 
-Диспетчер учетных данных
+    git init
 
-###  flutter
+### Привязка
 
-git clone https://github.com/flutter/flutter.git -b stable
+    git remote add origin https://github.com/Far4Ru/WeatherApp2021.git
 
-flutter doctor
+### Обновление
+
+    git pull
+
+### Удаление
+
+> Диспетчер учетных данных
+  
+</details>
+
+<details>
+  <summary>Flutter</summary>
+  
+  > Android Studio 2020.3.1
+
+  ### Загрузка
+  
+    git clone https://github.com/flutter/flutter.git -b stable
+
+  ### Проверка
+  
+    flutter doctor
+  
+  ### Установка Android SDK Command-line Tools
 
 Tools - SDK Manager - Android SDK - SDK Tools - Android SDK Command-line Tools (latest)
+  
+  ### Принятие лицензий
 
-flutter doctor --android-licenses
+    flutter doctor --android-licenses
+  
+  ### Добавление SDK
 
-locate flutter sdk
+Flutter SDK
+  
+</details>
+  
+## Задание
+
+<details>
+ <summary>курс</summary>
+  
+    https://gitlab.com/Erthela/fourth-mobile-dev
+  
+</details>
