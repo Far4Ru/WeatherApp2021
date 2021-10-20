@@ -71,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
               title: const Text('Избранное'),
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context)=> const FavouritePage(),
+                MaterialPageRoute(builder: (context)=> FavouritePage(favourites: const ["ds","das"]),
                 ),
               ),
             ),
@@ -1078,7 +1078,9 @@ class _SettingsPageState extends State<SettingsPage> {
 }
 class FavouritePage extends StatelessWidget {
 
-  const FavouritePage({Key? key}) : super(key: key);
+  var favourites = ["cs"];
+
+  FavouritePage({Key? key, required this.favourites}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1119,9 +1121,59 @@ class FavouritePage extends StatelessWidget {
                   bottomLeft: Radius.circular(10.0)
                 ),
               ),
-              child: Column(
-                children: const [
-                ]
+              child: ListView.builder(
+                itemCount: favourites.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    height: 45.0,
+                    decoration: const BoxDecoration(
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Container(
+                                child: Text(
+                                  favourites[index],
+                                  textAlign: TextAlign.left,
+                                  style: const TextStyle(
+                                      fontSize: 24),
+                                  maxLines: 1,
+                                ),
+                                decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0))
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                },
+                                child: Container(
+                                    margin: const EdgeInsets.all(0.0),
+                                    child: const Icon(
+                                      Icons.star,
+                                      color: Color(0xFF323232),
+                                      size: 30.0,
+                                    )
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(
+                              left: 15.0, right: 15.0, top: 0.0),
+                          child: Container(
+                            color: Colors.grey,
+                            height: 1.0,
+                          ),
+                        ),
+                      ],
+                    )
+                  );
+                },
               )
             ),
           ],
