@@ -631,8 +631,18 @@ class _MyHomePageState extends State<MyHomePage> {
       )
     );
   }
-  void _toSearchPage(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MySearchPage()));
+  void _toSearchPage(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => const MySearchPage()
+      )
+    );
+    setState(
+      () {
+        title = result;
+      }
+    );
   }
   void _toWeekPage(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) => const WeekPage()));
@@ -697,8 +707,8 @@ class SearchPage extends State<MySearchPage> {
                   onTap: () {
                     Navigator.pop(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => MyHomePage(title: items[index].strTitle,)));
+                      items[index].strTitle.toString()
+                    );
                   },
                   child: Container(
                     height: 45.0,
