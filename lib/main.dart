@@ -31,9 +31,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   double _bottomPanelHeight = 300;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  String title = "Город";
   void _changeBottomPanelState() {
     setState(() {
-      _bottomPanelHeight = _bottomPanelHeight == 300 ? 600 : 300;
+      _bottomPanelHeight = _bottomPanelHeight == 300 ? 550 : 300;
     });
   } // Bottom Panel
   @override
@@ -94,42 +95,66 @@ class _MyHomePageState extends State<MyHomePage> {
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(
-                  'assets/image0.png'),
+                    'assets/image0.png'),
                 fit: BoxFit.fill,
               ),
             ),
           ),
           Container(
-            padding: const EdgeInsets.only(top: 46.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const <Widget>[
-                Text(
-                  '10˚c',
-                  style: TextStyle(
-                    fontSize: 72.0,
-                    fontFamily: 'Manrope',
-                    color: Colors.white
+            padding: const EdgeInsets.only(top: 30.0),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        title,
+                        style: const TextStyle(
+                            fontSize: 32.0,
+                            fontFamily: 'Manrope',
+                            color: Colors.white
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.only(top: 130.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const <Widget>[
-                Text(
-                  '23 сент. 2021',
-                  style: TextStyle(
-                    fontSize: 22.0,
-                    fontFamily: 'Manrope',
-                    color: Colors.white
+                Container(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const <Widget>[
+                      Text(
+                        '10˚c',
+                        style: TextStyle(
+                          fontSize: 72.0,
+                          fontFamily: 'Manrope',
+                          color: Colors.white
+                        ),
+                      ),
+                    ],
                   ),
-                )
+                ),
+                Container(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const <Widget>[
+                      Text(
+                        '23 сент. 2021',
+                        style: TextStyle(
+                          fontSize: 22.0,
+                          fontFamily: 'Manrope',
+                          color: Colors.white
+                        ),
+                      )
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -607,7 +632,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
   void _toSearchPage(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MySearchPage(title: 'Поиск',)));
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MySearchPage()));
   }
   void _toWeekPage(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) => const WeekPage()));
@@ -619,8 +644,7 @@ class ItemDetail {
   ItemDetail (this.strTitle, this.isFavorite);
 }
 class MySearchPage extends StatefulWidget {
-  const MySearchPage({Key? key, required this.title}) : super(key: key);
-  final String title;
+  const MySearchPage({Key? key}) : super(key: key);
   @override
   State<MySearchPage> createState() => SearchPage();
 }
@@ -641,7 +665,7 @@ class SearchPage extends State<MySearchPage> {
             child: Row(
               children: [
                 IconButton(
-                  onPressed: () => _toSearchPage(context),
+                  onPressed: () => _toHomePage(context),
                   icon: const Icon(
                     Icons.keyboard_arrow_left,
                     size: 20,
@@ -671,10 +695,10 @@ class SearchPage extends State<MySearchPage> {
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
                   onTap: () {
-                    Navigator.push(
+                    Navigator.pop(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const MyHomePage(title: 'Погода',)));
+                          builder: (context) => MyHomePage(title: items[index].strTitle,)));
                   },
                   child: Container(
                     height: 45.0,
@@ -739,8 +763,8 @@ class SearchPage extends State<MySearchPage> {
       ),
     );
   }
-  void _toSearchPage(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MyHomePage(title: "Погода")));
+  void _toHomePage(BuildContext context) {
+    Navigator.of(context).pop(MaterialPageRoute(builder: (context) => const MyHomePage(title: "Погода")));
   }
 }
 
@@ -851,7 +875,7 @@ class WeekPage extends StatelessWidget {
     );
   }
   void _navigateToPreviousPage(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MyHomePage(title: "Погода")));
+    Navigator.of(context).pop(MaterialPageRoute(builder: (context) => const MyHomePage(title: "Погода")));
   }
 }
 class SettingsPage extends StatefulWidget {
@@ -1039,7 +1063,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
   void _navigateToPreviousPage(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MyHomePage(title: "Погода")));
+    Navigator.of(context).pop(MaterialPageRoute(builder: (context) => const MyHomePage(title: "Погода")));
   }
 }
 class FavouritePage extends StatelessWidget {
@@ -1096,7 +1120,7 @@ class FavouritePage extends StatelessWidget {
     );
   }
   void _navigateToPreviousPage(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MyHomePage(title: "Погода")));
+    Navigator.of(context).pop(MaterialPageRoute(builder: (context) => const MyHomePage(title: "Погода")));
   }
 }
 class AboutPage extends StatelessWidget {
@@ -1249,6 +1273,6 @@ class AboutPage extends StatelessWidget {
     );
   }
   void _navigateToPreviousPage(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MyHomePage(title: "Погода")));
+    Navigator.of(context).pop(MaterialPageRoute(builder: (context) => const MyHomePage(title: "Погода")));
   }
 }
