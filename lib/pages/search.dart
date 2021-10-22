@@ -5,16 +5,18 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'home.dart';
 import '../data/data.dart';
 
-class MySearchPage extends StatefulWidget {
-  const MySearchPage({Key? key}) : super(key: key);
+class SearchPage extends StatefulWidget {
+  List<ItemDetail> items = [];
+
+  String selected = "";
+  SearchPage({Key? key, required this.items, required this.selected}) : super(key: key);
+
   @override
-  State<MySearchPage> createState() => SearchPage();
+  State<SearchPage> createState() => _SearchPageState();
 }
 
-class SearchPage extends State<MySearchPage> {
+class _SearchPageState extends State<SearchPage> {
   final _controller = TextEditingController();
-
-  List<ItemDetail> items = [ItemDetail("Москва", false), ItemDetail("Санкт-Петербург", true)];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +29,7 @@ class SearchPage extends State<MySearchPage> {
             child: Row(
               children: [
                 IconButton(
-                  onPressed: () => _toHomePage(context),
+                  onPressed: () => _toHomePage(context, widget.selected),
                   icon: const Icon(
                     Icons.keyboard_arrow_left,
                     size: 20,
@@ -53,13 +55,13 @@ class SearchPage extends State<MySearchPage> {
           SizedBox(
             height: 200,
             child: ListView.builder(
-              itemCount: items.length,
+              itemCount: widget.items.length,
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
                   onTap: () {
-                    Navigator.pop(
+                    _toHomePage(
                         context,
-                        items[index].strTitle.toString()
+                        widget.items[index].strTitle.toString()
                     );
                   },
                   child: Container(
@@ -75,7 +77,7 @@ class SearchPage extends State<MySearchPage> {
                               children: <Widget>[
                                 Container(
                                   child: Text(
-                                    items[index].strTitle,
+                                    widget.items[index].strTitle,
                                     textAlign: TextAlign.left,
                                     style: const TextStyle(
                                         fontSize: 24),
@@ -88,14 +90,14 @@ class SearchPage extends State<MySearchPage> {
                                 GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      items[index].isFavorite =
-                                      !items[index].isFavorite;
+                                      widget.items[index].isFavorite =
+                                      !widget.items[index].isFavorite;
                                     });
                                   },
                                   child: Container(
                                       margin: const EdgeInsets.all(0.0),
                                       child: Icon(
-                                        items[index].isFavorite
+                                        widget.items[index].isFavorite
                                             ? Icons.star
                                             : Icons.star_border,
                                         color: const Color(0xFF323232),
@@ -125,8 +127,8 @@ class SearchPage extends State<MySearchPage> {
       ),
     );
   }
-  void _toHomePage(BuildContext context) {
-    Navigator.of(context).pop(MaterialPageRoute(builder: (context) => const MyHomePage(title: "Погода")));
+  void _toHomePage(BuildContext context , value) {
+    Navigator.pop(context, [value, widget.items]);
   }
 }
 

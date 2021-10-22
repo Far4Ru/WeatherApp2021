@@ -3,12 +3,19 @@ import 'package:flutter/material.dart';
 // import 'package:storyswiper/storyswiper.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'home.dart';
+import '../data/data.dart';
 
-class FavouritePage extends StatelessWidget {
+class FavouritePage extends StatefulWidget {
 
-  var favourites = [];
+  List<ItemDetail> items = [];
 
-  FavouritePage({Key? key, required this.favourites}) : super(key: key);
+  FavouritePage({Key? key, required this.items}) : super(key: key);
+
+  @override
+  State<FavouritePage> createState() => _FavouritePageState();
+}
+
+class _FavouritePageState extends State<FavouritePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +54,7 @@ class FavouritePage extends StatelessWidget {
                 SizedBox(
                   height: 200,
                   child: ListView.builder(
-                    itemCount: favourites.length,
+                    itemCount: widget.items.where((i) => i.isFavorite).toList().length,
                     itemBuilder: (BuildContext context, int index) {
                       return Container(
                         height: 45.0,
@@ -61,7 +68,7 @@ class FavouritePage extends StatelessWidget {
                               child: Row(
                                 children: [
                                   Text(
-                                    favourites[index],
+                                    widget.items.where((i) => i.isFavorite).toList()[index].strTitle,
                                     textAlign: TextAlign.left,
                                     style: const TextStyle(
                                         fontSize: 24
@@ -70,6 +77,9 @@ class FavouritePage extends StatelessWidget {
                                   ),
                                   GestureDetector(
                                     onTap: () {
+                                      setState(() {
+                                        widget.items[index].isFavorite = false;
+                                      });
                                     },
                                     child: Neumorphic(
                                       child: const Icon(
@@ -110,6 +120,7 @@ class FavouritePage extends StatelessWidget {
       ),
     );
   }
+
   void _navigateToPreviousPage(BuildContext context) {
     Navigator.of(context).pop(MaterialPageRoute(builder: (context) => const MyHomePage(title: "Погода")));
   }

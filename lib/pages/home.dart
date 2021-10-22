@@ -5,6 +5,7 @@ import 'favourite.dart';
 import 'search.dart';
 import 'settings.dart';
 import 'week.dart';
+import '../data/data.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -17,6 +18,7 @@ class _MyHomePageState extends State<MyHomePage> {
   double _bottomPanelHeight = 300;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   String title = "Город";
+  List<ItemDetail> items = [ItemDetail("Москва", false), ItemDetail("Санкт-Петербург", true)];
   void _changeBottomPanelState() {
     setState(() {
       _bottomPanelHeight = _bottomPanelHeight == 300 ? 550 : 300;
@@ -56,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 title: const Text('Избранные'),
                 onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context)=> FavouritePage(favourites: const ["Новиград","Вайтран"]),
+                  MaterialPageRoute(builder: (context)=> FavouritePage(items: items.where((i) => i.isFavorite).toList()),
                   ),
                 ),
               ),
@@ -620,12 +622,13 @@ class _MyHomePageState extends State<MyHomePage> {
     final result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => const MySearchPage()
+            builder: (context) => SearchPage(items: items, selected: title)
         )
     );
     setState(
             () {
-          title = result;
+          title = result[0];
+          items = result[1];
         }
     );
   }
