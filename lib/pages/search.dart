@@ -3,12 +3,7 @@ import 'package:flutter/material.dart';
 // import 'package:storyswiper/storyswiper.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'home.dart';
-
-class ItemDetail {
-  String strTitle;
-  var isFavorite = false;
-  ItemDetail (this.strTitle, this.isFavorite);
-}
+import '../data/data.dart';
 
 class MySearchPage extends StatefulWidget {
   const MySearchPage({Key? key}) : super(key: key);
