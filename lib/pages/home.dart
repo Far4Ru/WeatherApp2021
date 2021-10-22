@@ -53,10 +53,10 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               ListTile(
                 leading: const Icon(Icons.favorite_border),
-                title: const Text('Избранное'),
+                title: const Text('Избранные'),
                 onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context)=> const FavouritePage(),
+                  MaterialPageRoute(builder: (context)=> FavouritePage(favourites: const ["Новиград","Вайтран"]),
                   ),
                 ),
               ),
