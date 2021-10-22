@@ -57,7 +57,6 @@ class _FavouritePageState extends State<FavouritePage> {
                     itemCount: widget.items.where((i) => i.isFavorite).toList().length,
                     itemBuilder: (BuildContext context, int index) {
                       return Container(
-                        height: 45.0,
                         decoration: const BoxDecoration(
                         ),
                         child: Column(
@@ -66,14 +65,18 @@ class _FavouritePageState extends State<FavouritePage> {
                               margin: const EdgeInsets.only(left: 8, right: 8),
                               padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                               child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    widget.items.where((i) => i.isFavorite).toList()[index].strTitle,
-                                    textAlign: TextAlign.left,
-                                    style: const TextStyle(
-                                        fontSize: 24
+                                  Container(
+                                    margin: const EdgeInsets.only(left: 8, right: 8, top: 10, bottom: 10),
+                                    child: Text(
+                                      widget.items.where((i) => i.isFavorite).toList()[index].strTitle,
+                                      textAlign: TextAlign.left,
+                                      style: const TextStyle(
+                                          fontSize: 24
+                                      ),
+                                      maxLines: 1,
                                     ),
-                                    maxLines: 1,
                                   ),
                                   GestureDetector(
                                     onTap: () {
@@ -85,7 +88,7 @@ class _FavouritePageState extends State<FavouritePage> {
                                       child: const Icon(
                                         Icons.close,
                                         color: Color(0xFF323232),
-                                        size: 30.0,
+                                        size: 45.0,
                                       ),
                                       style: const NeumorphicStyle(
                                         shape: NeumorphicShape.flat,

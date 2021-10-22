@@ -30,48 +30,51 @@ class _MyHomePageState extends State<MyHomePage> {
         key: _scaffoldKey,
         backgroundColor: Colors.lightBlue,
         drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              const Padding(padding: EdgeInsets.only(top: 30, left: 20, bottom: 20),
-                child: Text(
-                  'Weather App',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                    fontSize: 24,
-                    fontFamily: 'Manrope',
+          child: Container(
+            color: const Color(0xFFE2EBFF),
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                const Padding(padding: EdgeInsets.only(top: 30, left: 20, bottom: 20),
+                  child: Text(
+                    'Weather App',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 24,
+                      fontFamily: 'Manrope',
+                    ),
                   ),
                 ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.settings),
-                title: const Text('Настройки'),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context)=> const SettingsPage(),
+                ListTile(
+                  leading: const Icon(Icons.settings),
+                  title: const Text('Настройки'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context)=> const SettingsPage(),
+                    ),
                   ),
                 ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.favorite_border),
-                title: const Text('Избранные'),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context)=> FavouritePage(items: items.where((i) => i.isFavorite).toList()),
+                ListTile(
+                  leading: const Icon(Icons.favorite_border),
+                  title: const Text('Избранные'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context)=> FavouritePage(items: items.where((i) => i.isFavorite).toList()),
+                    ),
                   ),
                 ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.account_circle),
-                title: const Text('О приложении'),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context)=> const AboutPage(),
+                ListTile(
+                  leading: const Icon(Icons.account_circle),
+                  title: const Text('О приложении'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context)=> const AboutPage(),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ), // Left Panel
         body: Stack(
