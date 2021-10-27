@@ -20,6 +20,14 @@ class DayAdditionalDetail {
   DayAdditionalDetail (this.type, this.value, this.unit, this.icon);
 }
 
+class SettingsParameter {
+  String type;
+  String name;
+  int selected;
+  List<String> values;
+  SettingsParameter (this.type, this.name, this.selected, this.values);
+}
+
 class HomeData {
   List<DayCardDetail> dayDetails = [
     DayCardDetail("06:00", "assets/icon_lightning.png", "10", "C"),
@@ -33,6 +41,13 @@ class HomeData {
     DayAdditionalDetail("breeze", "9", "м/с", "assets/breeze.png"),
     DayAdditionalDetail("humidity", "87", "%", "assets/humidity.png"),
   ];
+
+  List<SettingsParameter> settingsParameters = [
+    SettingsParameter("thermometer", "Температура", 0, ["\u00B0C", "\u00B0F"]),
+    SettingsParameter("breeze", "Сила ветра", 0, ["м/с", "км/ч"]),
+    SettingsParameter("barometer", "Давление", 0, ["мм.рт.ст.", "гПа"]),
+  ];
+
   HomeData ();
   List<DayCardDetail> get getDayDetails => dayDetails;
 }
