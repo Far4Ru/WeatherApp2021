@@ -18,7 +18,9 @@ class _MyHomePageState extends State<MyHomePage> {
   double _bottomPanelHeight = 300;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   String title = "Город";
+  String temperatureUnit = "C";
   List<ItemDetail> items = [ItemDetail("Москва", false), ItemDetail("Санкт-Петербург", true)];
+  HomeData homeData = HomeData();
   void _changeBottomPanelState() {
     setState(() {
       _bottomPanelHeight = _bottomPanelHeight == 300 ? 550 : 300;
@@ -236,185 +238,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           SizedBox(
                             height: 180.0,
                             width: MediaQuery.of(context).size.width,
-                            child: ListView (
-                                scrollDirection: Axis.horizontal,
-                                semanticChildCount: 4,
-                                children: [
-                                  Container(
-                                      height: 120,
-                                      width: 70,
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFFE2EBFF),
-                                        borderRadius: BorderRadius.only(
-                                            topRight: Radius.circular(10.0),
-                                            bottomRight: Radius.circular(10.0),
-                                            topLeft: Radius.circular(10.0),
-                                            bottomLeft: Radius.circular(10.0)
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey,
-                                            spreadRadius: 1,
-                                            blurRadius: 3,
-                                            offset: Offset(0, 2), // changes position of shadow
-                                          ),
-                                        ],
-                                      ),
-                                      margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
-                                      child: Column (
-                                        children: [
-                                          const Text(
-                                            '06:00',
-                                            style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontFamily: 'Roboto',
-                                                color: Colors.black
-                                            ),
-                                          ),
-                                          Tab(icon: Image.asset("assets/icon_lightning.png", width: 40, height: 40,)),
-                                          const Text(
-                                            '10 \u00B0C',
-                                            style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontFamily: 'Roboto',
-                                                color: Colors.black
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                  ),
-                                  Container(
-                                      height: 120,
-                                      width: 70,
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFFE2EBFF),
-                                        borderRadius: BorderRadius.only(
-                                            topRight: Radius.circular(10.0),
-                                            bottomRight: Radius.circular(10.0),
-                                            topLeft: Radius.circular(10.0),
-                                            bottomLeft: Radius.circular(10.0)
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey,
-                                            spreadRadius: 2,
-                                            blurRadius: 3,
-                                            offset: Offset(0, 2), // changes position of shadow
-                                          ),
-                                        ],
-                                      ),
-                                      margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
-                                      child: Column (
-                                        children: [
-                                          const Text(
-                                            '12:00',
-                                            style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontFamily: 'Roboto',
-                                                color: Colors.black
-                                            ),
-                                          ),
-                                          Tab(icon: Image.asset("assets/icon_sun.png", width: 40, height: 40,)),
-                                          const Text(
-                                            '10 \u00B0C',
-                                            style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontFamily: 'Roboto',
-                                                color: Colors.black
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                  ),
-                                  Container(
-                                      height: 120,
-                                      width: 70,
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFFE2EBFF),
-                                        borderRadius: BorderRadius.only(
-                                            topRight: Radius.circular(10.0),
-                                            bottomRight: Radius.circular(10.0),
-                                            topLeft: Radius.circular(10.0),
-                                            bottomLeft: Radius.circular(10.0)
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey,
-                                            spreadRadius: 1,
-                                            blurRadius: 3,
-                                            offset: Offset(0, 2), // changes position of shadow
-                                          ),
-                                        ],
-                                      ),
-                                      margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
-                                      child: Column (
-                                        children: [
-                                          const Text(
-                                            '18:00',
-                                            style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontFamily: 'Roboto',
-                                                color: Colors.black
-                                            ),
-                                          ),
-                                          Tab(icon: Image.asset("assets/icon_rain_heavy.png", width: 40, height: 40,)),
-                                          const Text(
-                                            '10 \u00B0C',
-                                            style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontFamily: 'Roboto',
-                                                color: Colors.black
-                                            ),
-                                          ),
-
-                                        ],
-                                      )
-                                  ),
-                                  Container(
-                                      height: 120,
-                                      width: 70,
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFFE0E9FD),
-                                        borderRadius: BorderRadius.only(
-                                            topRight: Radius.circular(10.0),
-                                            bottomRight: Radius.circular(10.0),
-                                            topLeft: Radius.circular(10.0),
-                                            bottomLeft: Radius.circular(10.0)
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey,
-                                            spreadRadius: 1,
-                                            blurRadius: 3,
-                                            offset: Offset(0, 2), // changes position of shadow
-                                          ),
-                                        ],
-                                      ),
-                                      margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
-                                      child: Column (
-                                        children: [
-                                          const Text(
-                                            '00:00',
-                                            style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontFamily: 'Roboto',
-                                                color: Colors.black
-                                            ),
-                                          ),
-                                          Tab(icon: Image.asset("assets/icon_rain.png", width: 40, height: 40,)),
-                                          const Text(
-                                            '10 \u00B0C',
-                                            style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontFamily: 'Roboto',
-                                                color: Colors.black
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                  ),
-                                ]
-                            ),
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: homeData.dayDetails.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return _buildVerticalCard(context, homeData.dayDetails[index]);
+                              }
+                            )
                           ),
                           if (_bottomPanelHeight > 400) SizedBox (
                             width: MediaQuery.of(context).size.width,
@@ -422,184 +252,14 @@ class _MyHomePageState extends State<MyHomePage> {
                               children: [
                                 Row (
                                   children: [
-                                    Container(
-                                        height: 70,
-                                        width: 150,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFE2EBFF),
-                                          borderRadius: BorderRadius.only(
-                                              topRight: Radius.circular(10.0),
-                                              bottomRight: Radius.circular(10.0),
-                                              topLeft: Radius.circular(10.0),
-                                              bottomLeft: Radius.circular(10.0)
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey,
-                                              spreadRadius: 1,
-                                              blurRadius: 3,
-                                              offset: Offset(0, 2), // changes position of shadow
-                                            ),
-                                          ],
-                                        ),
-                                        margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
-                                        child: Row (
-                                          children: [
-                                            Tab(icon: Image.asset("assets/thermometer.png", width: 40, height: 40,)),
-                                            const Text(
-                                              '8',
-                                              style: TextStyle(
-                                                  fontSize: 16.0,
-                                                  fontFamily: 'Roboto',
-                                                  color: Colors.black
-                                              ),
-                                            ),
-                                            const Text(
-                                              '\u00B0C',
-                                              style: TextStyle(
-                                                  fontSize: 16.0,
-                                                  fontFamily: 'Roboto',
-                                                  color: Colors.black
-                                              ),
-                                            ),
-
-                                          ],
-                                        )
-                                    ),
-                                    Container(
-                                        height: 70,
-                                        width: 150,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFE2EBFF),
-                                          borderRadius: BorderRadius.only(
-                                              topRight: Radius.circular(10.0),
-                                              bottomRight: Radius.circular(10.0),
-                                              topLeft: Radius.circular(10.0),
-                                              bottomLeft: Radius.circular(10.0)
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey,
-                                              spreadRadius: 2,
-                                              blurRadius: 3,
-                                              offset: Offset(0, 2), // changes position of shadow
-                                            ),
-                                          ],
-                                        ),
-                                        margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
-                                        child: Row (
-                                          children: [
-                                            Tab(icon: Image.asset("assets/humidity.png", width: 40, height: 40,)),
-                                            const Text(
-                                              '87',
-                                              style: TextStyle(
-                                                  fontSize: 16.0,
-                                                  fontFamily: 'Roboto',
-                                                  color: Colors.black
-                                              ),
-                                            ),
-                                            const Text(
-                                              '%',
-                                              style: TextStyle(
-                                                  fontSize: 16.0,
-                                                  fontFamily: 'Roboto',
-                                                  color: Colors.black
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                    )
+                                    _buildHorizontalCard(context, homeData.dayAdditionalDetails[0]),
+                                    _buildHorizontalCard(context, homeData.dayAdditionalDetails[3])
                                   ],
                                 ),
                                 Row (
                                   children: [
-                                    Container(
-                                        height: 70,
-                                        width: 150,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFE2EBFF),
-                                          borderRadius: BorderRadius.only(
-                                              topRight: Radius.circular(10.0),
-                                              bottomRight: Radius.circular(10.0),
-                                              topLeft: Radius.circular(10.0),
-                                              bottomLeft: Radius.circular(10.0)
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey,
-                                              spreadRadius: 1,
-                                              blurRadius: 3,
-                                              offset: Offset(0, 2), // changes position of shadow
-                                            ),
-                                          ],
-                                        ),
-                                        margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
-                                        child: Row (
-                                          children: [
-                                            Tab(icon: Image.asset("assets/breeze.png", width: 40, height: 40,)),
-                                            const Text(
-                                              '9',
-                                              style: TextStyle(
-                                                  fontSize: 16.0,
-                                                  fontFamily: 'Roboto',
-                                                  color: Colors.black
-                                              ),
-                                            ),
-                                            const Text(
-                                              'м/с',
-                                              style: TextStyle(
-                                                  fontSize: 16.0,
-                                                  fontFamily: 'Roboto',
-                                                  color: Colors.black
-                                              ),
-                                            ),
-
-                                          ],
-                                        )
-                                    ),
-                                    Container(
-                                        height: 70,
-                                        width: 150,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFE2EBFF),
-                                          borderRadius: BorderRadius.only(
-                                              topRight: Radius.circular(10.0),
-                                              bottomRight: Radius.circular(10.0),
-                                              topLeft: Radius.circular(10.0),
-                                              bottomLeft: Radius.circular(10.0)
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey,
-                                              spreadRadius: 2,
-                                              blurRadius: 3,
-                                              offset: Offset(0, 2), // changes position of shadow
-                                            ),
-                                          ],
-                                        ),
-                                        margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
-                                        child: Row (
-                                          children: [
-                                            Tab(icon: Image.asset("assets/barometer.png", width: 40, height: 40,)),
-                                            const Text(
-                                              '761',
-                                              style: TextStyle(
-                                                  fontSize: 16.0,
-                                                  fontFamily: 'Roboto',
-                                                  color: Colors.black
-                                              ),
-                                            ),
-                                            const Text(
-                                              'мм.рт.ст.',
-                                              style: TextStyle(
-                                                  fontSize: 16.0,
-                                                  fontFamily: 'Roboto',
-                                                  color: Colors.black
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                    )
+                                    _buildHorizontalCard(context, homeData.dayAdditionalDetails[2]),
+                                    _buildHorizontalCard(context, homeData.dayAdditionalDetails[1])
                                   ],
                                 ),
                               ],
@@ -638,4 +298,95 @@ class _MyHomePageState extends State<MyHomePage> {
   void _toWeekPage(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) => const WeekPage()));
   }
+}
+
+Widget _buildVerticalCard(BuildContext context, DayCardDetail details) {
+  return Container(
+      height: 120,
+      width: 70,
+      decoration: const BoxDecoration(
+        color: Color(0xFFE0E9FD),
+        borderRadius: BorderRadius.only(
+            topRight: Radius.circular(10.0),
+            bottomRight: Radius.circular(10.0),
+            topLeft: Radius.circular(10.0),
+            bottomLeft: Radius.circular(10.0)
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey,
+            spreadRadius: 1,
+            blurRadius: 3,
+            offset: Offset(0, 2), // changes position of shadow
+          ),
+        ],
+      ),
+      margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
+      child: Column (
+        children: [
+          Text(
+            details.time,
+            style: const TextStyle(
+                fontSize: 16.0,
+                fontFamily: 'Roboto',
+                color: Colors.black
+            ),
+          ),
+          Tab(icon: Image.asset(details.icon, width: 40, height: 40,)),
+          Text(
+            details.temperature + '\u00B0' + details.temeratureUnit,
+            style: const TextStyle(
+                fontSize: 16.0,
+                fontFamily: 'Roboto',
+                color: Colors.black
+            ),
+          ),
+        ],
+      )
+  );
+}
+Widget _buildHorizontalCard(BuildContext context, DayAdditionalDetail details) {
+  return Container(
+      height: 70,
+      width: 150,
+      decoration: const BoxDecoration(
+        color: Color(0xFFE2EBFF),
+        borderRadius: BorderRadius.only(
+            topRight: Radius.circular(10.0),
+            bottomRight: Radius.circular(10.0),
+            topLeft: Radius.circular(10.0),
+            bottomLeft: Radius.circular(10.0)
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey,
+            spreadRadius: 2,
+            blurRadius: 3,
+            offset: Offset(0, 2), // changes position of shadow
+          ),
+        ],
+      ),
+      margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
+      child: Row (
+        children: [
+          Tab(icon: Image.asset(details.icon, width: 40, height: 40,)),
+          Text(
+            details.value,
+            style: const TextStyle(
+                fontSize: 16.0,
+                fontFamily: 'Roboto',
+                color: Colors.black
+            ),
+          ),
+          Text(
+            details.unit,
+            style: const TextStyle(
+                fontSize: 16.0,
+                fontFamily: 'Roboto',
+                color: Colors.black
+            ),
+          ),
+        ],
+      )
+  );
 }

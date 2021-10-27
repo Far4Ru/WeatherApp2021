@@ -62,7 +62,7 @@ class _FavouritePageState extends State<FavouritePage> {
                         child: Column(
                           children: <Widget>[
                             Neumorphic(
-                              margin: const EdgeInsets.only(left: 8, right: 8),
+                              margin: const EdgeInsets.only(left: 8, right: 8, top: 10),
                               padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
