@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 // import 'package:expandable_bottom_sheet/expandable_bottom_sheet.dart';
 // import 'package:storyswiper/storyswiper.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import '../data/data.dart';
 import 'home.dart';
 
 class SettingsPage extends StatefulWidget {
-
-  const SettingsPage({Key? key}) : super(key: key);
+  final List<SettingsParameter> parameters;
+  const SettingsPage({Key? key, required this.parameters}) : super(key: key);
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();

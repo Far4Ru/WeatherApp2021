@@ -48,6 +48,12 @@ class HomeData {
     SettingsParameter("barometer", "Давление", 0, ["мм.рт.ст.", "гПа"]),
   ];
 
+  List<ItemDetail> locations = [
+    ItemDetail("Москва", false),
+    ItemDetail("Санкт-Петербург", true),
+    ItemDetail("Екатеринбург", true)
+  ];
+
   HomeData ();
   List<DayCardDetail> get getDayDetails => dayDetails;
 }

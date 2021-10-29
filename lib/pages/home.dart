@@ -19,7 +19,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   String title = "Город";
   String temperatureUnit = "C";
-  List<ItemDetail> items = [ItemDetail("Москва", false), ItemDetail("Санкт-Петербург", true)];
   HomeData homeData = HomeData();
   void _changeBottomPanelState() {
     setState(() {
@@ -53,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   title: const Text('Настройки'),
                   onTap: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context)=> const SettingsPage(),
+                    MaterialPageRoute(builder: (context)=> SettingsPage(parameters: homeData.settingsParameters),
                     ),
                   ),
                 ),
@@ -62,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   title: const Text('Избранные'),
                   onTap: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context)=> FavouritePage(items: items.where((i) => i.isFavorite).toList()),
+                    MaterialPageRoute(builder: (context)=> FavouritePage(items: homeData.locations.where((i) => i.isFavorite).toList()),
                     ),
                   ),
                 ),
@@ -285,13 +284,13 @@ class _MyHomePageState extends State<MyHomePage> {
     final result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => SearchPage(items: items, selected: title)
+            builder: (context) => SearchPage(items: homeData.locations, selected: title)
         )
     );
     setState(
             () {
           title = result[0];
-          items = result[1];
+          homeData.locations = result[1];
         }
     );
   }

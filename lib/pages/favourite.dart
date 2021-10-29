@@ -7,9 +7,9 @@ import '../data/data.dart';
 
 class FavouritePage extends StatefulWidget {
 
-  List<ItemDetail> items = [];
+  final List<ItemDetail> items;
 
-  FavouritePage({Key? key, required this.items}) : super(key: key);
+  const FavouritePage({Key? key, required this.items}) : super(key: key);
 
   @override
   State<FavouritePage> createState() => _FavouritePageState();
