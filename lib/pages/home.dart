@@ -50,11 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ListTile(
                   leading: const Icon(Icons.settings),
                   title: const Text('Настройки'),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context)=> SettingsPage(parameters: homeData.settingsParameters),
-                    ),
-                  ),
+                  onTap: () => _toSettingsPage(context)
                 ),
                 ListTile(
                   leading: const Icon(Icons.favorite_border),
@@ -291,6 +287,20 @@ class _MyHomePageState extends State<MyHomePage> {
             () {
           title = result[0];
           homeData.locations = result[1];
+        }
+    );
+  }
+
+  void _toSettingsPage(BuildContext context) async {
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SettingsPage(parameters: homeData.settingsParameters)
+        )
+    );
+    setState(
+            () {
+          homeData.settingsParameters = result;
         }
     );
   }
