@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 // import 'package:expandable_bottom_sheet/expandable_bottom_sheet.dart';
 // import 'package:storyswiper/storyswiper.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'home.dart';
 import '../data/data.dart';
 
 class SearchPage extends StatefulWidget {
-  List<ItemDetail> items = [];
+  final List<ItemDetail> items;
 
-  String selected = "";
-  SearchPage({Key? key, required this.items, required this.selected}) : super(key: key);
+  final String selected;
+  const SearchPage({Key? key, required this.items, required this.selected}) : super(key: key);
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -17,6 +16,33 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final _controller = TextEditingController();
+
+  String _name = "";
+
+  List<ItemDetail> searchItems = [];
+
+  _changeName(){
+    setState(
+      () {
+        _name = _controller.text;
+        searchItems = widget.items.where((element) => element.strTitle.contains(_name)).toList();
+      }
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.text = _name;
+    _controller.addListener(_changeName);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,13 +81,13 @@ class _SearchPageState extends State<SearchPage> {
           SizedBox(
             height: 200,
             child: ListView.builder(
-              itemCount: widget.items.length,
+              itemCount: searchItems.length,
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
                   onTap: () {
                     _toHomePage(
                         context,
-                        widget.items[index].strTitle.toString()
+                        searchItems[index].strTitle.toString()
                     );
                   },
                   child: Container(
@@ -77,7 +103,7 @@ class _SearchPageState extends State<SearchPage> {
                               children: <Widget>[
                                 Container(
                                   child: Text(
-                                    widget.items[index].strTitle,
+                                    searchItems[index].strTitle,
                                     textAlign: TextAlign.left,
                                     style: const TextStyle(
                                         fontSize: 24),
@@ -90,14 +116,14 @@ class _SearchPageState extends State<SearchPage> {
                                 GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      widget.items[index].isFavorite =
-                                      !widget.items[index].isFavorite;
+                                      searchItems[index].isFavorite =
+                                      !searchItems[index].isFavorite;
                                     });
                                   },
                                   child: Container(
                                       margin: const EdgeInsets.all(0.0),
                                       child: Icon(
-                                        widget.items[index].isFavorite
+                                        searchItems[index].isFavorite
                                             ? Icons.star
                                             : Icons.star_border,
                                         color: const Color(0xFF323232),
