@@ -28,6 +28,22 @@ class SettingsParameter {
   SettingsParameter (this.type, this.name, this.selected, this.values);
 }
 
+class AboutAppDetail {
+  String name;
+  String org;
+  String version;
+  String date;
+  String year;
+
+  AboutAppDetail(this.name, this.org, this.version, this.date, this.year);
+}
+
+class PageTitles {
+  String name;
+  String title;
+  PageTitles(this.name, this.title);
+}
+
 class HomeData {
   List<DayCardDetail> dayDetails = [
     DayCardDetail("06:00", "assets/icon_lightning.png", "10", "C"),

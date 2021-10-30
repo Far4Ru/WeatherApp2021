@@ -6,6 +6,9 @@
 > Flutter
 
 * flutter_neumorphic 3.1.0
+* shared_preferences
+* hive
+* http
 
 
 ## Установка
