@@ -71,3 +71,11 @@ Flutter SDK
     https://gitlab.com/Erthela/fourth-mobile-dev
   
 </details>
+
+## Изображения
+<details>
+ <summary>Скриншоты</summary>
+
+    ![Скриншоты](https://github.com/Far4Ru/WeatherApp2021/tree/main/images/screens.png)
+
+</details>
