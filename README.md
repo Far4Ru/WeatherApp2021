@@ -76,6 +76,6 @@ Flutter SDK
 <details>
  <summary>Скриншоты</summary>
 
-    ![Скриншоты](https://github.com/Far4Ru/WeatherApp2021/blob/main/images/screens.png)
+![Скриншоты](https://github.com/Far4Ru/WeatherApp2021/blob/main/images/screens.png)
 
 </details>
