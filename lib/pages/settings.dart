@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:expandable_bottom_sheet/expandable_bottom_sheet.dart';
-// import 'package:storyswiper/storyswiper.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import '../data/data.dart';
-import 'home.dart';
 
 class SettingsPage extends StatefulWidget {
   final List<SettingsParameter> parameters;
@@ -71,7 +68,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget _buildParameterCard(BuildContext context, SettingsParameter parameters) {
     return Row(
         children: [
-          Text(parameters.name),
+          Text(parameters.parameter.name),
           Expanded(
             child: NeumorphicToggle(
               height: 40,
@@ -79,12 +76,12 @@ class _SettingsPageState extends State<SettingsPage> {
               displayForegroundOnlyIfSelected: true,
               children: [
                 ToggleElement(
-                  background: Center(child:  Text(parameters.values[0], style: const TextStyle(fontWeight: FontWeight.w500),)),
-                  foreground: Center(child: Text(parameters.values[0], style:  const TextStyle(fontWeight: FontWeight.w700, color: Colors.white),)),
+                  background: Center(child:  Text(parameters.parameter.values[0], style: const TextStyle(fontWeight: FontWeight.w500),)),
+                  foreground: Center(child: Text(parameters.parameter.values[0], style:  const TextStyle(fontWeight: FontWeight.w700, color: Colors.white),)),
                 ),
                 ToggleElement(
-                  background: Center(child: Text(parameters.values[1], style:  const TextStyle(fontWeight: FontWeight.w500),)),
-                  foreground: Center(child:  Text(parameters.values[1], style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.white),)),
+                  background: Center(child: Text(parameters.parameter.values[1], style:  const TextStyle(fontWeight: FontWeight.w500),)),
+                  foreground: Center(child:  Text(parameters.parameter.values[1], style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.white),)),
                 ),
               ],
               thumb: Neumorphic(
@@ -95,7 +92,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               onChanged: (value) {
                 setState(() {
-                  parameters.selected = value;
+                  parameters.switchParameter();
                   // print("_firstSelected: $_selectedIndex");
                 });
               },

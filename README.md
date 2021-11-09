@@ -11,6 +11,8 @@
 * http
 
 
+https://openweathermap.org/
+
 ## Установка
 
 <details>

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+// import 'package:expandable_bottom_sheet/expandable_bottom_sheet.dart';
 import 'about.dart';
 import 'favourite.dart';
 import 'search.dart';
@@ -20,11 +21,30 @@ class _MyHomePageState extends State<MyHomePage> {
   String title = "Город";
   String temperatureUnit = "C";
   HomeData homeData = HomeData();
+
+  String _getValue(String type, String value, String unit) {
+    if (homeData.settingsParameters.indexWhere((element) => element.parameter.type == type) > -1) {
+      SettingsParameter settingsParameter = homeData.settingsParameters.firstWhere((element) => element.parameter.type == type);
+      return settingsParameter.parameter.change(value, settingsParameter.selected);
+    } else {
+      return value;
+    }
+  }
+  String _getUnit(String type, String unit) {
+    if (homeData.settingsParameters.indexWhere((element) => element.parameter.type == type) > -1) {
+      SettingsParameter settingsParameter = homeData.settingsParameters
+          .firstWhere((element) => element.parameter.type == type);
+      return settingsParameter.getUnit();
+    }
+    return unit;
+  }
+
   void _changeBottomPanelState() {
     setState(() {
       _bottomPanelHeight = _bottomPanelHeight == 300 ? 550 : 300;
     });
   } // Bottom Panel
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -307,95 +327,96 @@ class _MyHomePageState extends State<MyHomePage> {
   void _toWeekPage(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) => const WeekPage()));
   }
+
+  Widget _buildVerticalCard(BuildContext context, DayCardDetail details) {
+    return Container(
+        height: 120,
+        width: 70,
+        decoration: const BoxDecoration(
+          color: Color(0xFFE0E9FD),
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(10.0),
+              bottomRight: Radius.circular(10.0),
+              topLeft: Radius.circular(10.0),
+              bottomLeft: Radius.circular(10.0)
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey,
+              spreadRadius: 1,
+              blurRadius: 3,
+              offset: Offset(0, 2), // changes position of shadow
+            ),
+          ],
+        ),
+        margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
+        child: Column (
+          children: [
+            Text(
+              details.time,
+              style: const TextStyle(
+                  fontSize: 16.0,
+                  fontFamily: 'Roboto',
+                  color: Colors.black
+              ),
+            ),
+            Tab(icon: Image.asset(details.icon, width: 40, height: 40,)),
+            Text(
+              details.temperature + '\u00B0' + details.temperatureUnit,
+              style: const TextStyle(
+                  fontSize: 16.0,
+                  fontFamily: 'Roboto',
+                  color: Colors.black
+              ),
+            ),
+          ],
+        )
+    );
+  }
+  Widget _buildHorizontalCard(BuildContext context, DayAdditionalDetail details) {
+    return Container(
+        height: 70,
+        width: 150,
+        decoration: const BoxDecoration(
+          color: Color(0xFFE2EBFF),
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(10.0),
+              bottomRight: Radius.circular(10.0),
+              topLeft: Radius.circular(10.0),
+              bottomLeft: Radius.circular(10.0)
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey,
+              spreadRadius: 2,
+              blurRadius: 3,
+              offset: Offset(0, 2), // changes position of shadow
+            ),
+          ],
+        ),
+        margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
+        child: Row (
+          children: [
+            Tab(icon: Image.asset(details.icon, width: 40, height: 40,)),
+            Text(
+              _getValue(details.type,details.value,details.unit),
+              style: const TextStyle(
+                  fontSize: 16.0,
+                  fontFamily: 'Roboto',
+                  color: Colors.black
+              ),
+            ),
+            Text(
+              _getUnit(details.type, details.unit),
+              style: const TextStyle(
+                  fontSize: 16.0,
+                  fontFamily: 'Roboto',
+                  color: Colors.black
+              ),
+            ),
+          ],
+        )
+    );
+  }
 }
 
-Widget _buildVerticalCard(BuildContext context, DayCardDetail details) {
-  return Container(
-      height: 120,
-      width: 70,
-      decoration: const BoxDecoration(
-        color: Color(0xFFE0E9FD),
-        borderRadius: BorderRadius.only(
-            topRight: Radius.circular(10.0),
-            bottomRight: Radius.circular(10.0),
-            topLeft: Radius.circular(10.0),
-            bottomLeft: Radius.circular(10.0)
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey,
-            spreadRadius: 1,
-            blurRadius: 3,
-            offset: Offset(0, 2), // changes position of shadow
-          ),
-        ],
-      ),
-      margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
-      child: Column (
-        children: [
-          Text(
-            details.time,
-            style: const TextStyle(
-                fontSize: 16.0,
-                fontFamily: 'Roboto',
-                color: Colors.black
-            ),
-          ),
-          Tab(icon: Image.asset(details.icon, width: 40, height: 40,)),
-          Text(
-            details.temperature + '\u00B0' + details.temeratureUnit,
-            style: const TextStyle(
-                fontSize: 16.0,
-                fontFamily: 'Roboto',
-                color: Colors.black
-            ),
-          ),
-        ],
-      )
-  );
-}
-Widget _buildHorizontalCard(BuildContext context, DayAdditionalDetail details) {
-  return Container(
-      height: 70,
-      width: 150,
-      decoration: const BoxDecoration(
-        color: Color(0xFFE2EBFF),
-        borderRadius: BorderRadius.only(
-            topRight: Radius.circular(10.0),
-            bottomRight: Radius.circular(10.0),
-            topLeft: Radius.circular(10.0),
-            bottomLeft: Radius.circular(10.0)
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey,
-            spreadRadius: 2,
-            blurRadius: 3,
-            offset: Offset(0, 2), // changes position of shadow
-          ),
-        ],
-      ),
-      margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
-      child: Row (
-        children: [
-          Tab(icon: Image.asset(details.icon, width: 40, height: 40,)),
-          Text(
-            details.value,
-            style: const TextStyle(
-                fontSize: 16.0,
-                fontFamily: 'Roboto',
-                color: Colors.black
-            ),
-          ),
-          Text(
-            details.unit,
-            style: const TextStyle(
-                fontSize: 16.0,
-                fontFamily: 'Roboto',
-                color: Colors.black
-            ),
-          ),
-        ],
-      )
-  );
-}
