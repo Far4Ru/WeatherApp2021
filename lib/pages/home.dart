@@ -22,23 +22,6 @@ class _MyHomePageState extends State<MyHomePage> {
   String temperatureUnit = "C";
   HomeData homeData = HomeData();
 
-  String _getValue(String type, String value, String unit) {
-    if (homeData.settingsParameters.indexWhere((element) => element.parameter.type == type) > -1) {
-      SettingsParameter settingsParameter = homeData.settingsParameters.firstWhere((element) => element.parameter.type == type);
-      return settingsParameter.parameter.change(value, settingsParameter.selected);
-    } else {
-      return value;
-    }
-  }
-  String _getUnit(String type, String unit) {
-    if (homeData.settingsParameters.indexWhere((element) => element.parameter.type == type) > -1) {
-      SettingsParameter settingsParameter = homeData.settingsParameters
-          .firstWhere((element) => element.parameter.type == type);
-      return settingsParameter.getUnit();
-    }
-    return unit;
-  }
-
   void _changeBottomPanelState() {
     setState(() {
       _bottomPanelHeight = _bottomPanelHeight == 300 ? 550 : 300;
@@ -133,10 +116,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const <Widget>[
+                      children: <Widget>[
                         Text(
-                          '10˚c',
-                          style: TextStyle(
+                          homeData.getValue("thermometer","10","\u00B0C") + homeData.getUnit("thermometer", "\u00B0C"),
+                          style: const TextStyle(
                               fontSize: 72.0,
                               fontFamily: 'Manrope',
                               color: Colors.white
@@ -362,7 +345,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Tab(icon: Image.asset(details.icon, width: 40, height: 40,)),
             Text(
-              details.temperature + '\u00B0' + details.temperatureUnit,
+              homeData.getValue("thermometer",details.temperature,details.temperatureUnit) + homeData.getUnit("thermometer", details.temperatureUnit),
               style: const TextStyle(
                   fontSize: 16.0,
                   fontFamily: 'Roboto',
@@ -399,7 +382,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             Tab(icon: Image.asset(details.icon, width: 40, height: 40,)),
             Text(
-              _getValue(details.type,details.value,details.unit),
+              homeData.getValue(details.type,details.value,details.unit),
               style: const TextStyle(
                   fontSize: 16.0,
                   fontFamily: 'Roboto',
@@ -407,7 +390,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             Text(
-              _getUnit(details.type, details.unit),
+              homeData.getUnit(details.type, details.unit),
               style: const TextStyle(
                   fontSize: 16.0,
                   fontFamily: 'Roboto',
