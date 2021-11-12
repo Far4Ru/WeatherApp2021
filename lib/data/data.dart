@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class ItemDetail {
   String strTitle;
@@ -133,6 +135,53 @@ class PageTitles {
 //     );
 //   }
 // }
+
+@HiveType(typeId: 2)
+class DayAdditionalDetailHive {
+  @HiveField(0)
+  String type;
+  @HiveField(1)
+  String value;
+  @HiveField(2)
+  String unit;
+  @HiveField(3)
+  String icon;
+  DayAdditionalDetailHive (this.type, this.value, this.unit, this.icon);
+}
+
+@HiveType(typeId: 0)
+class WeatherDayHive extends HiveObject {
+
+  @HiveField(0)
+  int datetime;
+
+  @HiveField(1)
+  String location;
+
+  @HiveField(2)
+  List<DayAdditionalDetailHive> details;
+
+  @HiveField(3)
+  String icon;
+
+  WeatherDayHive(this.datetime, this.location, this.details, this.icon);
+}
+
+@HiveType(typeId: 1)
+class LocationsHive extends HiveObject {
+
+  @HiveField(0)
+  String name;
+
+  @HiveField(1)
+  String locationName;
+
+  @HiveField(2)
+  bool favourite;
+
+  LocationsHive(this.name, this.locationName, this.favourite);
+}
+
 class WeatherDay {
   List<DayCardDetail> dayDetails;
   List<DayAdditionalDetail> dayAdditionalDetails;
@@ -140,28 +189,47 @@ class WeatherDay {
   String location;
   String locationName;
 
+  final Map<String, String> _icons = {
+    "thunderstorm" : "assets/icon_lightning.png",
+    "light rain" : "assets/icon_rain.png",
+    "shower rain" : "assets/icon_rain_heavy.png",
+    "clear sky" : "assets/icon_sun.png"
+  };
+
   WeatherDay(this.dayDetails, this.dayAdditionalDetails, this.datetime, this.location, this.locationName);
 
   update() async {
+    await Hive.initFlutter();
+    location = "Moscow";
     final response = await http
-        .get(Uri.parse('https://api.openweathermap.org/data/2.5/forecast?q=Moscow&appid=0802fd908c155491e99f266ff0d443e5&lang=ru&units=metric'));
+        .get(Uri.parse('https://api.openweathermap.org/data/2.5/forecast?q=' + location + '&appid=0802fd908c155491e99f266ff0d443e5&lang=ru&units=metric'));
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       // return Album.fromJson(jsonDecode(response.body));
-      Map body = json.decode(response.body);
-      body["list"].forEach((day) => {
-        day["dt"],
-        day["weather"]["main"] / ["description"],
-        DayCardDetail("06:00", "assets/icon_lightning.png", day["main"]["temp"], "\u00B0C"),
-        DayCardDetail("12:00", "assets/icon_sun.png", day["main"]["temp"], "\u00B0C"),
-        DayCardDetail("18:00", "assets/icon_rain_heavy.png", day["main"]["temp"], "\u00B0C"),
-        DayCardDetail("00:00", "assets/icon_rain.png", day["main"]["temp"], "\u00B0C"),
-        DayAdditionalDetail("thermometer", day["main"]["temp"], "\u00B0C", "assets/thermometer.png"),
-        DayAdditionalDetail("barometer", day["main"]["pressure"], "мм.рт.ст.", "assets/barometer.png"),
-        DayAdditionalDetail("breeze", day["wind"], "м/с", "assets/breeze.png"),
-        DayAdditionalDetail("humidity", day["main"]["humidity"], "%", "assets/humidity.png"),
-      });
+      var weatherBox = await Hive.openBox<WeatherDayHive>('box_for_weather_day');
+      print(weatherBox.length);
+      // Map body = json.decode(response.body);
+      // body["list"].forEach((day) => {
+      //   weatherBox.add(
+      //     WeatherDayHive(
+      //       day["dt"],
+      //       location,
+      //       [
+      //         DayAdditionalDetailHive("thermometer", day["main"]["temp"].toString(), "\u00B0C", "assets/thermometer.png"),
+      //         DayAdditionalDetailHive("barometer", day["main"]["pressure"].toString(), "мм.рт.ст.", "assets/barometer.png"),
+      //         DayAdditionalDetailHive("breeze", day["wind"].toString(), "м/с", "assets/breeze.png"),
+      //         DayAdditionalDetailHive("humidity", day["main"]["humidity"].toString(), "%", "assets/humidity.png")
+      //       ],
+      //       _icons.keys.firstWhere((element) => element == day["weather"][0]["description"], orElse: () => "assets/icon_sun.png")
+      //     )
+      //   ),
+      // });
+      var locationsBox = await Hive.openBox<LocationsHive>('box_for_locations');
+      print(locationsBox.length);
+
+      locationsBox.add(LocationsHive("Moscow","Москва",false));
+
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
@@ -205,6 +273,7 @@ class HomeData {
   ];
 
   HomeData () {
+
     for (var element in settingsParameters) {
       element.update();
     }

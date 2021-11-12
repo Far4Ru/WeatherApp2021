@@ -64,6 +64,17 @@ Tools - SDK Manager - Android SDK - SDK Tools - Android SDK Command-line Tools (
 Flutter SDK
   
 </details>
+
+
+<details>
+  <summary>Hive</summary>
+
+    flutter clean
+
+    flutter pub get
+
+    flutter packages pub run build_runner build
+</details>
   
 ## Задание
 
