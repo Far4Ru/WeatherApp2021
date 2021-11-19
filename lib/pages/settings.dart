@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import '../data/data.dart';
+import '../data/settings.dart';
 
 class SettingsPage extends StatefulWidget {
   final List<SettingsParameter> parameters;

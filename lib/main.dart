@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 // import 'package:expandable_bottom_sheet/expandable_bottom_sheet.dart';
 // import 'package:storyswiper/storyswiper.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'models/locations.dart';
 import 'pages/home.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(LocationsHiveAdapter());
+  Hive.registerAdapter(WeatherDayHiveAdapter());
+  Hive.registerAdapter(DayAdditionalDetailHiveAdapter());
   runApp(const MyApp());
 }
 
