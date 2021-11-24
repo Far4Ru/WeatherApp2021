@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:weather_app/models/locations.dart';
 // import 'package:expandable_bottom_sheet/expandable_bottom_sheet.dart';
 import 'about.dart';
 import 'favourite.dart';
@@ -7,6 +8,8 @@ import 'search.dart';
 import 'settings.dart';
 import 'week.dart';
 import '../data/data.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -90,63 +93,73 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            Container(
-              padding: const EdgeInsets.only(top: 30.0),
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          title,
-                          style: const TextStyle(
-                              fontSize: 32.0,
-                              fontFamily: 'Manrope',
-                              color: Colors.white
+            ValueListenableBuilder(
+              valueListenable: Hive.box<LocationsHive>('box_for_locations').listenable(),
+              builder: (context, Box<LocationsHive> box, _) {
+                if (box.values.isEmpty) {
+                  return const Center(
+                    child: Text("No data"),
+                  );
+                }
+                return Container(
+                    padding: const EdgeInsets.only(top: 30.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                title,
+                                style: const TextStyle(
+                                    fontSize: 32.0,
+                                    fontFamily: 'Manrope',
+                                    color: Colors.white
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                homeData.getValue("thermometer","10","\u00B0C") + homeData.getUnit("thermometer", "\u00B0C"),
+                                style: const TextStyle(
+                                    fontSize: 72.0,
+                                    fontFamily: 'Manrope',
+                                    color: Colors.white
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const <Widget>[
+                              Text(
+                                '23 сент. 2021',
+                                style: TextStyle(
+                                    fontSize: 22.0,
+                                    fontFamily: 'Manrope',
+                                    color: Colors.white
+                                ),
+                              )
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          homeData.getValue("thermometer","10","\u00B0C") + homeData.getUnit("thermometer", "\u00B0C"),
-                          style: const TextStyle(
-                              fontSize: 72.0,
-                              fontFamily: 'Manrope',
-                              color: Colors.white
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const <Widget>[
-                        Text(
-                          '23 сент. 2021',
-                          style: TextStyle(
-                              fontSize: 22.0,
-                              fontFamily: 'Manrope',
-                              color: Colors.white
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                  );
+              }
             ),
             Container(
               margin: const EdgeInsets.only(top: 42, left: 20),

@@ -12,6 +12,7 @@ void main() async {
   Hive.registerAdapter(LocationsHiveAdapter());
   Hive.registerAdapter(WeatherDayHiveAdapter());
   Hive.registerAdapter(DayAdditionalDetailHiveAdapter());
+  await Hive.openBox<LocationsHive>('box_for_locations');
   runApp(const MyApp());
 }
 
