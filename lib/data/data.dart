@@ -98,6 +98,8 @@ class HomeData {
     SettingsParameter(SettingsBarometer(), 0),
   ];
 
+  String locationName = "Moscow";
+
   List<ItemDetail> locations = [
     ItemDetail("Москва", false),
     ItemDetail("Санкт-Петербург", true),

@@ -10,6 +10,7 @@ import 'week.dart';
 import '../data/data.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -101,6 +102,19 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Text("No data"),
                   );
                 }
+                LocationsHive location = box.values.firstWhere((element) => element.locationName == homeData.locationName);
+                List<WeatherDayHive> day = location.weatherDays;
+                DateTime now = DateTime.now();
+                WeatherDayHive dayNow = WeatherDayHive(0, [], "");
+                String thermometer = "";
+                if (day.isNotEmpty) {
+                  dayNow = day.firstWhere(
+                      (element) =>
+                      element.datetime * 1000 > now.millisecondsSinceEpoch - (3 * 60 * 60 * 1000) &&
+                      element.datetime * 1000 < now.millisecondsSinceEpoch
+                    );
+                  thermometer = double.parse(dayNow.details.firstWhere((element) => element.type=="thermometer").value).round().toString();
+                }
                 return Container(
                     padding: const EdgeInsets.only(top: 30.0),
                     child: Column(
@@ -112,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Text(
-                                title,
+                                location.name,
                                 style: const TextStyle(
                                     fontSize: 32.0,
                                     fontFamily: 'Manrope',
@@ -129,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Text(
-                                homeData.getValue("thermometer","10","\u00B0C") + homeData.getUnit("thermometer", "\u00B0C"),
+                                homeData.getValue("thermometer",thermometer,"\u00B0C") + homeData.getUnit("thermometer", "\u00B0C"),
                                 style: const TextStyle(
                                     fontSize: 72.0,
                                     fontFamily: 'Manrope',
@@ -144,10 +158,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const <Widget>[
+                            children: <Widget>[
                               Text(
-                                '23 сент. 2021',
-                                style: TextStyle(
+                                DateFormat("d LLL y").format(now),
+                                style: const TextStyle(
                                     fontSize: 22.0,
                                     fontFamily: 'Manrope',
                                     color: Colors.white
@@ -195,99 +209,129 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            Positioned(
-                bottom: 00,
+    ValueListenableBuilder(
+      valueListenable: Hive.box<LocationsHive>('box_for_locations').listenable(),
+      builder: (context, Box<LocationsHive> box, _) {
+        if (box.values.isEmpty) {
+          return const Center(
+          child: Text("No data"),
+        );
+      }
+      LocationsHive location = box.values.firstWhere((element) => element.locationName == homeData.locationName);
+      List<WeatherDayHive> day = location.weatherDays;
+      DateTime now = DateTime.now();
+      WeatherDayHive dayNow = WeatherDayHive(0, [], "");
+      List<WeatherDayHive> dayList = [];
+      List<DayAdditionalDetailHive> dayDetails = [];
+      String thermometer = "";
+      if (day.isNotEmpty) {
+        dayNow = day.firstWhere(
+          (element) =>
+          element.datetime * 1000 > now.millisecondsSinceEpoch - (3 * 60 * 60 * 1000) &&
+          element.datetime * 1000 < now.millisecondsSinceEpoch
+        );
+        dayList = day.where(
+                (element) =>
+            element.datetime * 1000 > now.millisecondsSinceEpoch - (3 * 60 * 60 * 1000) &&
+                element.datetime * 1000 < now.millisecondsSinceEpoch
+        ).toList();
+        dayDetails = dayNow.details;
+      }
+      return Positioned(
+          bottom: 00,
+          width: MediaQuery.of(context).size.width,
+          height: _bottomPanelHeight,
+          child: Container (
+              decoration: const BoxDecoration(
+                color: Color(0xFFE2EBFF),
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(20.0),
+                    bottomRight: Radius.circular(0.0),
+                    topLeft: Radius.circular(20.0),
+                    bottomLeft: Radius.circular(0.0)),
+              ),
+              child: SizedBox(
                 width: MediaQuery.of(context).size.width,
-                height: _bottomPanelHeight,
-                child: Container (
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFE2EBFF),
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(20.0),
-                          bottomRight: Radius.circular(0.0),
-                          topLeft: Radius.circular(20.0),
-                          bottomLeft: Radius.circular(0.0)),
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onVerticalDragStart: (details){
+                        _changeBottomPanelState();
+                      },
+                      child: Container(
+                        height: 30,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        color: const Color(0xFFE2EBFF),
+                        child: SizedBox(
+                          height: 30,
+                          width: MediaQuery.of(context).size.width,
+                          child: Column(
+                              children: [
+                                Container(
+                                    width: 80,
+                                    height: 3.3,
+                                    margin: const EdgeInsets.only(top: 10),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.blue,
+                                    )
+                                ),
+                              ]
+                          ),
+                        ),
+                      ),
                     ),
-                    child: SizedBox(
+                    if (_bottomPanelHeight > 400) Text(
+                      DateFormat("d LLLL").format(DateTime.now()),
+                      style: const TextStyle(
+                          fontSize: 22.0,
+                          fontFamily: 'Manrope',
+                          color: Colors.black
+                      ),
+                    ),
+                    SizedBox(
+                      height: 180.0,
+                      width: MediaQuery.of(context).size.width,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: dayList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return _buildVerticalCard(context, dayList[index]);
+                        }
+                      )
+                    ),
+                    if (_bottomPanelHeight > 400) SizedBox (
                       width: MediaQuery.of(context).size.width,
                       child: Column(
                         children: [
-                          GestureDetector(
-                            onVerticalDragStart: (details){
-                              _changeBottomPanelState();
-                            },
-                            child: Container(
-                              height: 30,
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              color: const Color(0xFFE2EBFF),
-                              child: SizedBox(
-                                height: 30,
-                                width: MediaQuery.of(context).size.width,
-                                child: Column(
-                                    children: [
-                                      Container(
-                                          width: 80,
-                                          height: 3.3,
-                                          margin: const EdgeInsets.only(top: 10),
-                                          decoration: const BoxDecoration(
-                                            color: Colors.blue,
-                                          )
-                                      ),
-                                    ]
-                                ),
-                              ),
-                            ),
+                          Row (
+                            children: [
+                              _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "thermometer")),
+                              _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "humidity"))
+                            ],
                           ),
-                          if (_bottomPanelHeight > 400) const Text(
-                            '23 сентября',
-                            style: TextStyle(
-                                fontSize: 22.0,
-                                fontFamily: 'Manrope',
-                                color: Colors.black
-                            ),
-                          ),
-                          SizedBox(
-                            height: 180.0,
-                            width: MediaQuery.of(context).size.width,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: homeData.dayDetails.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return _buildVerticalCard(context, homeData.dayDetails[index]);
-                              }
-                            )
-                          ),
-                          if (_bottomPanelHeight > 400) SizedBox (
-                            width: MediaQuery.of(context).size.width,
-                            child: Column(
-                              children: [
-                                Row (
-                                  children: [
-                                    _buildHorizontalCard(context, homeData.dayAdditionalDetails[0]),
-                                    _buildHorizontalCard(context, homeData.dayAdditionalDetails[3])
-                                  ],
-                                ),
-                                Row (
-                                  children: [
-                                    _buildHorizontalCard(context, homeData.dayAdditionalDetails[2]),
-                                    _buildHorizontalCard(context, homeData.dayAdditionalDetails[1])
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          OutlinedButton(
-                            onPressed: () => _toWeekPage(context),
-                            child: const Text('Прогноз на неделю', style: TextStyle(color: Color(0xFF038CFE))),
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(width: 1.5, color: Color(0xFF038CFE)),
-                            ),
+                          Row (
+                            children: [
+                              _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "breeze")),
+                              _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "barometer"))
+                            ],
                           ),
                         ],
                       ),
-                    )
-                )
-            ),
+                    ),
+                    OutlinedButton(
+                      onPressed: () => _toWeekPage(context),
+                      child: const Text('Прогноз на неделю', style: TextStyle(color: Color(0xFF038CFE))),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(width: 1.5, color: Color(0xFF038CFE)),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+          )
+      );
+    }
+    ),
           ],
         )
     );
@@ -324,7 +368,13 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) => const WeekPage()));
   }
 
-  Widget _buildVerticalCard(BuildContext context, DayCardDetail details) {
+  Widget _buildVerticalCard(BuildContext context, WeatherDayHive details) {
+    DayAdditionalDetailHive temperature = DayAdditionalDetailHive("thermometer", "10", "\u00B0C", "assets/icon_sun.png");
+    if(details.details.isNotEmpty) {
+      temperature = details.details.firstWhere(
+        (element) => element.type == "thermometer"
+      );
+    }
     return Container(
         height: 120,
         width: 70,
@@ -349,7 +399,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column (
           children: [
             Text(
-              details.time,
+              DateFormat.Hm().format(DateTime.fromMillisecondsSinceEpoch(details.datetime * 1000)),
               style: const TextStyle(
                   fontSize: 16.0,
                   fontFamily: 'Roboto',
@@ -358,7 +408,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Tab(icon: Image.asset(details.icon, width: 40, height: 40,)),
             Text(
-              homeData.getValue("thermometer",details.temperature,details.temperatureUnit) + homeData.getUnit("thermometer", details.temperatureUnit),
+              homeData.getValue("thermometer",double.parse(temperature.value).round().toString(),temperature.unit) + homeData.getUnit("thermometer", temperature.unit),
               style: const TextStyle(
                   fontSize: 16.0,
                   fontFamily: 'Roboto',
@@ -369,7 +419,7 @@ class _MyHomePageState extends State<MyHomePage> {
         )
     );
   }
-  Widget _buildHorizontalCard(BuildContext context, DayAdditionalDetail details) {
+  Widget _buildHorizontalCard(BuildContext context, DayAdditionalDetailHive details) {
     return Container(
         height: 70,
         width: 150,

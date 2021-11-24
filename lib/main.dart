@@ -6,8 +6,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'models/locations.dart';
 import 'pages/home.dart';
+import 'package:intl/intl.dart';
 
 void main() async {
+  // Intl.defaultLocale = 'ru_RU';
   await Hive.initFlutter();
   Hive.registerAdapter(LocationsHiveAdapter());
   Hive.registerAdapter(WeatherDayHiveAdapter());
