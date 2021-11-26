@@ -18,11 +18,15 @@ class SettingsBarometer extends SettingsParameterDetails{
   @override
   String change(String number, int select, String unit) {
     if (select == 0 && unit != values[0]) {
-      return (int.parse(number) / 1.333).round().toString();
+      return (num.parse(number) / 1.333).round().toString();
     } else if (select == 1 && unit != values[1]) {
-      return (int.parse(number) * 1.333).round().toString();
+      return (num.parse(number) * 1.333).round().toString();
     }
-    return number;
+    try {
+      return num.parse(number).round().toString();
+    } catch (e) {
+      return number;
+    }
   }
 }
 class SettingsTemperature extends SettingsParameterDetails{
@@ -35,11 +39,15 @@ class SettingsTemperature extends SettingsParameterDetails{
   @override
   String change(String number, int select, String unit) {
     if (select == 0 && unit != values[0]) {
-      return ((int.parse(number) - 32) * 5/9).round().toString();
+      return ((num.parse(number) - 32) * 5/9).round().toString();
     } else if (select == 1 && unit != values[1]) {
-      return ((int.parse(number) * 9/5) + 32).round().toString();
+      return ((num.parse(number) * 9/5) + 32).round().toString();
     }
-    return number;
+    try {
+      return num.parse(number).round().toString();
+    } catch (e) {
+      return number;
+    }
   }
 }
 
@@ -53,11 +61,15 @@ class SettingsBreeze extends SettingsParameterDetails{
   @override
   String change(String number, int select, String unit) {
     if (select == 0 && unit != values[0]) {
-      return (int.parse(number) / 3.6).round().toString();
+      return (num.parse(number) / 3.6).round().toString();
     } else if (select == 1 && unit != values[1]) {
-      return (int.parse(number) * 3.6).round().toString();
+      return (num.parse(number) * 3.6).round().toString();
     }
-    return number;
+    try {
+      return num.parse(number).round().toString();
+    } catch (e) {
+      return number;
+    }
   }
 }
 

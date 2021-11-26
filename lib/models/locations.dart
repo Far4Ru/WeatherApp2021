@@ -33,6 +33,7 @@ class LocationsHive extends HiveObject {
 
   update() async {
     if (locationName.isNotEmpty) {
+      // TODO: - Если нет прогноза на неделю, иначе - return
       final response = await http.get(Uri.parse(url + locationName + urlParams));
       if (response.statusCode == 200) {
         // If the server did return a 200 OK response,
@@ -41,11 +42,15 @@ class LocationsHive extends HiveObject {
         Map body = json.decode(response.body);
         body["list"].forEach((day) =>
         {
-          if (weatherDays
-              .where((element) =>
-          element.datetime == day["dt"])
+          if (
+            weatherDays
+              .where(
+                (element) =>
+                element.datetime == day["dt"]
+              )
               .toList()
-              .isEmpty) weatherBox.add(
+              .isEmpty
+          ) weatherBox.add(
               WeatherDayHive(
                   day["dt"],
                   [
@@ -56,7 +61,7 @@ class LocationsHive extends HiveObject {
                         "barometer", day["main"]["pressure"].toString(),
                         "мм.рт.ст.", "assets/barometer.png"),
                     DayAdditionalDetailHive(
-                        "breeze", day["wind"].toString(), "м/с",
+                        "breeze", day["wind"]["speed"].toString(), "м/с",
                         "assets/breeze.png"),
                     DayAdditionalDetailHive(
                         "humidity", day["main"]["humidity"].toString(), "%",
@@ -68,6 +73,8 @@ class LocationsHive extends HiveObject {
               )
           ),
         });
+        print(weatherBox.values.length);
+        weatherDays = weatherBox.values.toList();
       } else {
         // If the server did not return a 200 OK response,
         // then throw an exception.

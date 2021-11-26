@@ -38,7 +38,38 @@ class AboutAppDetail {
 
   AboutAppDetail(this.name, this.org, this.version, this.date, this.year);
 }
-
+// datetime = now;
+// now = DateTime.fromMillisecondsSinceEpoch(now.millisecondsSinceEpoch ~/ 100000 * 100 * 1000);
+// dayDetails = [];
+// dayAdditionalDetails = [];
+// for (var element in locationWeatherList) {
+// var locationWeatherDateTime = DateTime.fromMillisecondsSinceEpoch(element.datetime * 1000);
+// if (now.day == locationWeatherDateTime.day) {
+// dayDetails.add(
+// DayCardDetail(
+// locationWeatherDateTime.hour.toString().padLeft(2, "0") + ":00",
+// element.icon,
+// element.details.firstWhere((element) => element.type == "thermometer").value,
+// "\u00B0C"
+// )
+// );
+// if (locationWeatherDateTime.hour <= now.hour && locationWeatherDateTime.hour+3 >= now.hour) {
+// dayAdditionalDetails = [];
+// }
+// if(dayAdditionalDetails.isEmpty) {
+// for (var element in element.details) {
+// dayAdditionalDetails.add(
+// DayAdditionalDetail(
+// element.type,
+// element.value,
+// element.unit,
+// element.icon
+// )
+// );
+// }
+// }
+// }
+// }
 class PageTitles {
   String name;
   String title;
@@ -67,6 +98,8 @@ class HomeData {
     SettingsParameter(SettingsBarometer(), 0),
   ];
 
+  String locationName = "Moscow";
+
   List<ItemDetail> locations = [
     ItemDetail("Москва", false),
     ItemDetail("Санкт-Петербург", true),
@@ -85,8 +118,8 @@ class HomeData {
     updateLocations();
   }
 
-  updateLocations() async {
-    var locationBox = await Hive.openBox<LocationsHive>('box_for_locations');
+  updateLocations() {
+    var locationBox = Hive.box<LocationsHive>('box_for_locations');
     if (locationBox.values.isEmpty) {
       for (var defaultLocation in _defaultLocations) {
         locationBox.add(
@@ -106,7 +139,7 @@ class HomeData {
       SettingsParameter settingsParameter = settingsParameters.firstWhere((element) => element.parameter.type == type);
       return settingsParameter.parameter.change(value, settingsParameter.selected, unit);
     } else {
-      return value;
+      return num.parse(value).round().toString();
     }
   }
 
