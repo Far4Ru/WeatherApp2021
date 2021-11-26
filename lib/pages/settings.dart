@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import '../data/settings.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
+import 'package:weather_app/models/locations.dart';
 
 class SettingsPage extends StatefulWidget {
   final List<SettingsParameter> parameters;
@@ -56,6 +59,25 @@ class _SettingsPageState extends State<SettingsPage> {
                         return _buildParameterCard(context, widget.parameters[index]);
                       }
                   ),
+                ),
+                ValueListenableBuilder(
+                  valueListenable: Hive.box<LocationsHive>('box_for_locations').listenable(),
+                  builder: (context, Box<LocationsHive> box, _) {
+                    if (box.values.isEmpty) {
+                      return const Center(
+                        child: Text("No data"),
+                      );
+                    }
+                    return Container(
+                      child: NeumorphicButton(
+                        onPressed: () => box.values.forEach((location) => {
+                          location.weatherDays.forEach((element) {if (element.isInBox) element.delete();})
+                        }),
+                        child: const Text("Очистить данные", style: TextStyle(
+                            fontWeight: FontWeight.w500)),
+                      ),
+                    );
+                  }
                 ),
               ],
             ),

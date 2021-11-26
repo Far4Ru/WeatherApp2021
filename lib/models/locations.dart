@@ -33,6 +33,7 @@ class LocationsHive extends HiveObject {
 
   update() async {
     if (locationName.isNotEmpty) {
+      // TODO: - Если нет прогноза на неделю, иначе - return
       final response = await http.get(Uri.parse(url + locationName + urlParams));
       if (response.statusCode == 200) {
         // If the server did return a 200 OK response,

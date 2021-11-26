@@ -139,7 +139,7 @@ class HomeData {
       SettingsParameter settingsParameter = settingsParameters.firstWhere((element) => element.parameter.type == type);
       return settingsParameter.parameter.change(value, settingsParameter.selected, unit);
     } else {
-      return value;
+      return num.parse(value).round().toString();
     }
   }
 

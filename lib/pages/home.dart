@@ -111,8 +111,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   dayNow = day.firstWhere(
                       (element) =>
                       element.datetime * 1000 > now.millisecondsSinceEpoch - (3 * 60 * 60 * 1000) &&
-                      element.datetime * 1000 < now.millisecondsSinceEpoch
+                      element.datetime * 1000 < now.millisecondsSinceEpoch + (3 * 60 * 60 * 1000)
+                      , orElse: () => WeatherDayHive(0, [], "")
+                  );
+                  if (dayNow.details.isEmpty) {
+                    return const Center(
+                      child: Text("No data"),
                     );
+                  }
                   thermometer = double.parse(dayNow.details.firstWhere((element) => element.type=="thermometer").value).round().toString();
                 }
                 return Container(
@@ -228,12 +234,19 @@ class _MyHomePageState extends State<MyHomePage> {
         dayNow = day.firstWhere(
           (element) =>
           element.datetime * 1000 > now.millisecondsSinceEpoch - (3 * 60 * 60 * 1000) &&
-          element.datetime * 1000 < now.millisecondsSinceEpoch
+          element.datetime * 1000 < now.millisecondsSinceEpoch + (3 * 60 * 60 * 1000),
+          orElse: () => WeatherDayHive(0, [], "")
         );
+
+        if (dayNow.details.isEmpty) {
+          return const Center(
+            child: Text("No data"),
+          );
+        }
         dayList = day.where(
                 (element) =>
             element.datetime * 1000 > now.millisecondsSinceEpoch - (3 * 60 * 60 * 1000) &&
-                element.datetime * 1000 < now.millisecondsSinceEpoch
+                element.datetime * 1000 < now.millisecondsSinceEpoch + (12 * 60 * 60 * 1000)
         ).toList();
         dayDetails = dayNow.details;
       }
@@ -330,10 +343,10 @@ class _MyHomePageState extends State<MyHomePage> {
               )
           )
       );
-    }
+      }
     ),
           ],
-        )
+      )
     );
   }
   void _toSearchPage(BuildContext context) async {
@@ -408,7 +421,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Tab(icon: Image.asset(details.icon, width: 40, height: 40,)),
             Text(
-              homeData.getValue("thermometer",double.parse(temperature.value).round().toString(),temperature.unit) + homeData.getUnit("thermometer", temperature.unit),
+              homeData.getValue("thermometer",double.parse(temperature.value).round().toString(),temperature.unit) + " " + homeData.getUnit("thermometer", temperature.unit),
               style: const TextStyle(
                   fontSize: 16.0,
                   fontFamily: 'Roboto',
@@ -445,7 +458,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             Tab(icon: Image.asset(details.icon, width: 40, height: 40,)),
             Text(
-              homeData.getValue(details.type,details.value,details.unit),
+              homeData.getValue(details.type,details.value,details.unit) + " ",
               style: const TextStyle(
                   fontSize: 16.0,
                   fontFamily: 'Roboto',
