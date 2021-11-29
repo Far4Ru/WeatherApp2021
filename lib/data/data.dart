@@ -98,7 +98,7 @@ class HomeData {
     SettingsParameter(SettingsBarometer(), 0),
   ];
 
-  String locationName = "Moscow";
+  AppSettings appSettings = AppSettings("Light", "Moscow");
 
   List<ItemDetail> locations = [
     ItemDetail("Москва", false),
@@ -115,6 +115,7 @@ class HomeData {
     for (var element in settingsParameters) {
       element.update();
     }
+    appSettings.update();
     updateLocations();
   }
 
@@ -150,5 +151,12 @@ class HomeData {
       return settingsParameter.getUnit();
     }
     return unit;
+  }
+
+  setLocationName(String locationName) {
+    if(locationName.isNotEmpty) {
+      appSettings.location = locationName;
+      appSettings.updateLocation();
+    }
   }
 }

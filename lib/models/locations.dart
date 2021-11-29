@@ -11,16 +11,18 @@ part 'locations.g.dart';
 class LocationsHive extends HiveObject {
 
   @HiveField(0)
-  String name;
+  String name; // View
 
   @HiveField(1)
-  String locationName;
+  String locationName; // Server
 
   @HiveField(2)
   bool favourite;
 
   @HiveField(3)
   List<WeatherDayHive> weatherDays;
+
+  late Box<LocationsHive> _locationsBox;
 
   final Map<String, String> _icons = {
     "thunderstorm" : "assets/icon_lightning.png",
@@ -32,7 +34,8 @@ class LocationsHive extends HiveObject {
   LocationsHive(this.name, this.locationName, this.favourite, this.weatherDays);
 
   update() async {
-    checkWeatherToday();
+    _locationsBox = Hive.box<LocationsHive>('box_for_locations');
+    await _loadWeatherDays();
     if (locationName.isNotEmpty && !checkWeatherToday()) {
       final response = await http.get(Uri.parse(url + locationName + urlParams));
       if (response.statusCode == 200) {
@@ -44,7 +47,6 @@ class LocationsHive extends HiveObject {
   }
 
   checkWeatherToday() {
-    _loadWeatherDays();
     DateTime now = DateTime.now();
     int beforeNow = DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
     int afterNow = DateTime(now.year, now.month, now.day+1).millisecondsSinceEpoch;
@@ -57,13 +59,11 @@ class LocationsHive extends HiveObject {
   }
 
   _loadWeatherDays() async {
-    Box<WeatherDayHive> weatherDayBox = Hive.box<WeatherDayHive>('box_for_weather_day');
-    weatherDays = weatherDayBox.values.toList();
+    weatherDays = _locationsBox.values.firstWhere((element) => element.locationName == locationName).weatherDays;
   }
 
   _fillWeatherDays(Map body) async {
-    // If the server did return a 200 OK response,
-    Box<WeatherDayHive> weatherDayBox = Hive.box<WeatherDayHive>('box_for_weather_day');
+    weatherDays = _locationsBox.values.firstWhere((element) => element.locationName == locationName).weatherDays;
     body["list"].forEach((day) =>
     {
       if (
@@ -74,7 +74,7 @@ class LocationsHive extends HiveObject {
       )
           .toList()
           .isEmpty
-      ) weatherDayBox.add(
+      ) weatherDays.add(
           WeatherDayHive(
               day["dt"] * 1000,
               [
@@ -97,7 +97,15 @@ class LocationsHive extends HiveObject {
           )
       ),
     });
-    weatherDays = weatherDayBox.values.toList();
+    _updateBox();
+  }
+
+  favouriteChange() {
+    favourite = !favourite;
+    _updateBox();
+  }
+  _updateBox() {
+    _locationsBox.putAt(_locationsBox.values.toList().indexWhere((element) => element.locationName == locationName), LocationsHive(name, locationName, favourite, weatherDays));
   }
 }
 

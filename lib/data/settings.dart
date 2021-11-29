@@ -94,3 +94,36 @@ class SettingsParameter {
     return parameter.values[selected];
   }
 }
+
+class AppSettings {
+  String theme;
+  String location;
+
+  AppSettings(this.theme, this.location);
+
+  update() {
+    if (getTheme().toString().isEmpty) updateTheme();
+    if (getLocation().toString().isEmpty) updateLocation();
+  }
+
+  updateTheme() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("theme", theme);
+  }
+
+  updateLocation() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("location", location);
+  }
+
+  getTheme() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    theme = prefs.getString("theme") ?? "";
+    return theme;
+  }
+  getLocation() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    location = prefs.getString("location") ?? "";
+    return location;
+  }
+}

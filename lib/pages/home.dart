@@ -102,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Text("No data"),
                   );
                 }
-                LocationsHive location = box.values.firstWhere((element) => element.locationName == homeData.locationName);
+                LocationsHive location = box.values.firstWhere((element) => element.locationName == homeData.appSettings.location);
                 List<WeatherDayHive> day = location.weatherDays;
                 DateTime now = DateTime.now();
                 WeatherDayHive dayNow = WeatherDayHive(0, [], "");
@@ -217,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-    ValueListenableBuilder(
+            ValueListenableBuilder(
       valueListenable: Hive.box<LocationsHive>('box_for_locations').listenable(),
       builder: (context, Box<LocationsHive> box, _) {
         if (box.values.isEmpty) {
@@ -225,7 +225,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Text("No data"),
         );
       }
-      LocationsHive location = box.values.firstWhere((element) => element.locationName == homeData.locationName);
+      LocationsHive location = box.values.firstWhere((element) => element.locationName == homeData.appSettings.location);
       List<WeatherDayHive> day = location.weatherDays;
       DateTime now = DateTime.now();
       WeatherDayHive dayNow = WeatherDayHive(0, [], "");
@@ -357,13 +357,12 @@ class _MyHomePageState extends State<MyHomePage> {
     final result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => SearchPage(items: homeData.locations, selected: title)
+            builder: (context) => SearchPage(selected: title)
         )
     );
     setState(
-            () {
-          title = result[0];
-          homeData.locations = result[1];
+        () {
+          homeData.setLocationName(result[0]);
         }
     );
   }

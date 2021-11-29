@@ -9,12 +9,19 @@ class WeekPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        margin: const EdgeInsets.only(top: 25),
+      body: Stack(
+          children: <Widget>[
+            Container(
+        height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        child: Column(
-          children: [
-            Row(
+        color: const Color(0xFFDEE9FF),
+      ),
+            Container(
+              margin: const EdgeInsets.only(top: 25),
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+        children: [
+          Row(
               children: [
                 IconButton(
                   onPressed: () => _navigateToPreviousPage(context),
@@ -33,8 +40,8 @@ class WeekPage extends StatelessWidget {
                     )
                 )
               ],
-            ),
-            Container(
+          ),
+          Container(
               //color: Colors.lightBlueAccent,
                 margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
                 decoration: const BoxDecoration(
@@ -93,8 +100,8 @@ class WeekPage extends StatelessWidget {
                       ),
                     ]
                 )
-            ),
-            Container(
+          ),
+          Container(
               margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
               child: OutlinedButton(
                 onPressed: () => _navigateToPreviousPage(context),
@@ -103,10 +110,12 @@ class WeekPage extends StatelessWidget {
                   side: const BorderSide(width: 1.5, color: Color(0xFF000000)),
                 ),
               ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
+            ),
+          ]
+        )
     );
   }
   void _navigateToPreviousPage(BuildContext context) {

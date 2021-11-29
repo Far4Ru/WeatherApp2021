@@ -68,14 +68,12 @@ class _SettingsPageState extends State<SettingsPage> {
                         child: Text("No data"),
                       );
                     }
-                    return Container(
-                      child: NeumorphicButton(
-                        onPressed: () => box.values.forEach((location) => {
-                          location.weatherDays.forEach((element) {if (element.isInBox) element.delete();})
-                        }),
-                        child: const Text("Очистить данные", style: TextStyle(
-                            fontWeight: FontWeight.w500)),
-                      ),
+                    return NeumorphicButton(
+                      onPressed: () => box.values.forEach((location) => {
+                        location.weatherDays.forEach((element) {if (element.isInBox) element.delete();})
+                      }),
+                      child: const Text("Очистить данные", style: TextStyle(
+                          fontWeight: FontWeight.w500)),
                     );
                   }
                 ),
