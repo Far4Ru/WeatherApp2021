@@ -32,55 +32,72 @@ class LocationsHive extends HiveObject {
   LocationsHive(this.name, this.locationName, this.favourite, this.weatherDays);
 
   update() async {
-    if (locationName.isNotEmpty) {
-      // TODO: - Если нет прогноза на неделю, иначе - return
+    checkWeatherToday();
+    if (locationName.isNotEmpty && !checkWeatherToday()) {
       final response = await http.get(Uri.parse(url + locationName + urlParams));
       if (response.statusCode == 200) {
-        // If the server did return a 200 OK response,
-        var weatherBox = await Hive.openBox<WeatherDayHive>(
-            'box_for_weather_day');
-        Map body = json.decode(response.body);
-        body["list"].forEach((day) =>
-        {
-          if (
-            weatherDays
-              .where(
-                (element) =>
-                element.datetime == day["dt"]
-              )
-              .toList()
-              .isEmpty
-          ) weatherBox.add(
-              WeatherDayHive(
-                  day["dt"],
-                  [
-                    DayAdditionalDetailHive(
-                        "thermometer", day["main"]["temp"].toString(),
-                        "\u00B0C", "assets/thermometer.png"),
-                    DayAdditionalDetailHive(
-                        "barometer", day["main"]["pressure"].toString(),
-                        "мм.рт.ст.", "assets/barometer.png"),
-                    DayAdditionalDetailHive(
-                        "breeze", day["wind"]["speed"].toString(), "м/с",
-                        "assets/breeze.png"),
-                    DayAdditionalDetailHive(
-                        "humidity", day["main"]["humidity"].toString(), "%",
-                        "assets/humidity.png")
-                  ],
-                  _icons.keys.firstWhere((element) =>
-                  element == day["weather"][0]["description"],
-                      orElse: () => "assets/icon_sun.png")
-              )
-          ),
-        });
-        print(weatherBox.values.length);
-        weatherDays = weatherBox.values.toList();
+        _fillWeatherDays(json.decode(response.body));
       } else {
-        // If the server did not return a 200 OK response,
-        // then throw an exception.
         throw Exception('Failed to load data');
       }
     }
+  }
+
+  checkWeatherToday() {
+    _loadWeatherDays();
+    DateTime now = DateTime.now();
+    int beforeNow = DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
+    int afterNow = DateTime(now.year, now.month, now.day+1).millisecondsSinceEpoch;
+    var today = weatherDays.where((weatherDay) => weatherDay.datetime > beforeNow && weatherDay.datetime < afterNow);
+    if (today.isNotEmpty) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  _loadWeatherDays() async {
+    Box<WeatherDayHive> weatherDayBox = Hive.box<WeatherDayHive>('box_for_weather_day');
+    weatherDays = weatherDayBox.values.toList();
+  }
+
+  _fillWeatherDays(Map body) async {
+    // If the server did return a 200 OK response,
+    Box<WeatherDayHive> weatherDayBox = Hive.box<WeatherDayHive>('box_for_weather_day');
+    body["list"].forEach((day) =>
+    {
+      if (
+      weatherDays
+          .where(
+              (element) =>
+          element.datetime == day["dt"]
+      )
+          .toList()
+          .isEmpty
+      ) weatherDayBox.add(
+          WeatherDayHive(
+              day["dt"] * 1000,
+              [
+                DayAdditionalDetailHive(
+                    "thermometer", day["main"]["temp"].toString(),
+                    "\u00B0C", "assets/thermometer.png"),
+                DayAdditionalDetailHive(
+                    "barometer", day["main"]["pressure"].toString(),
+                    "мм.рт.ст.", "assets/barometer.png"),
+                DayAdditionalDetailHive(
+                    "breeze", day["wind"]["speed"].toString(), "м/с",
+                    "assets/breeze.png"),
+                DayAdditionalDetailHive(
+                    "humidity", day["main"]["humidity"].toString(), "%",
+                    "assets/humidity.png")
+              ],
+              _icons.keys.firstWhere((element) =>
+              element == day["weather"][0]["description"],
+                  orElse: () => "assets/icon_sun.png")
+          )
+      ),
+    });
+    weatherDays = weatherDayBox.values.toList();
   }
 }
 

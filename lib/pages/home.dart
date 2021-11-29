@@ -107,11 +107,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 DateTime now = DateTime.now();
                 WeatherDayHive dayNow = WeatherDayHive(0, [], "");
                 String thermometer = "";
+                int beforeNow = DateTime(now.year, now.month, now.day, now.hour - 3).millisecondsSinceEpoch;
+                int afterNow = DateTime(now.year, now.month, now.day, now.hour + 3).millisecondsSinceEpoch;
                 if (day.isNotEmpty) {
                   dayNow = day.firstWhere(
                       (element) =>
-                      element.datetime * 1000 > now.millisecondsSinceEpoch - (3 * 60 * 60 * 1000) &&
-                      element.datetime * 1000 < now.millisecondsSinceEpoch + (3 * 60 * 60 * 1000)
+                      element.datetime > beforeNow &&
+                      element.datetime < afterNow
                       , orElse: () => WeatherDayHive(0, [], "")
                   );
                   if (dayNow.details.isEmpty) {
@@ -230,11 +232,13 @@ class _MyHomePageState extends State<MyHomePage> {
       List<WeatherDayHive> dayList = [];
       List<DayAdditionalDetailHive> dayDetails = [];
       String thermometer = "";
+      int beforeNow = DateTime(now.year, now.month, now.day, now.hour - 3).millisecondsSinceEpoch;
+      int afterNow = DateTime(now.year, now.month, now.day + 1, 1).millisecondsSinceEpoch;
       if (day.isNotEmpty) {
         dayNow = day.firstWhere(
           (element) =>
-          element.datetime * 1000 > now.millisecondsSinceEpoch - (3 * 60 * 60 * 1000) &&
-          element.datetime * 1000 < now.millisecondsSinceEpoch + (3 * 60 * 60 * 1000),
+          element.datetime > beforeNow &&
+          element.datetime < afterNow,
           orElse: () => WeatherDayHive(0, [], "")
         );
 
@@ -244,9 +248,9 @@ class _MyHomePageState extends State<MyHomePage> {
           );
         }
         dayList = day.where(
-                (element) =>
-            element.datetime * 1000 > now.millisecondsSinceEpoch - (3 * 60 * 60 * 1000) &&
-                element.datetime * 1000 < now.millisecondsSinceEpoch + (12 * 60 * 60 * 1000)
+          (element) =>
+          element.datetime > beforeNow &&
+          element.datetime < afterNow
         ).toList();
         dayDetails = dayNow.details;
       }
@@ -412,7 +416,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column (
           children: [
             Text(
-              DateFormat.Hm().format(DateTime.fromMillisecondsSinceEpoch(details.datetime * 1000)),
+              DateFormat.Hm().format(DateTime.fromMillisecondsSinceEpoch(details.datetime)),
               style: const TextStyle(
                   fontSize: 16.0,
                   fontFamily: 'Roboto',
