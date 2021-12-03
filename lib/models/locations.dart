@@ -22,8 +22,6 @@ class LocationsHive extends HiveObject {
   @HiveField(3)
   List<WeatherDayHive> weatherDays;
 
-  late Box<LocationsHive> _locationsBox;
-
   final Map<String, String> _icons = {
     "thunderstorm" : "assets/icon_lightning.png",
     "light rain" : "assets/icon_rain.png",
@@ -34,7 +32,6 @@ class LocationsHive extends HiveObject {
   LocationsHive(this.name, this.locationName, this.favourite, this.weatherDays);
 
   update() async {
-    _locationsBox = Hive.box<LocationsHive>('box_for_locations');
     await _loadWeatherDays();
     if (locationName.isNotEmpty && !checkWeatherToday()) {
       final response = await http.get(Uri.parse(url + locationName + urlParams));
@@ -59,10 +56,12 @@ class LocationsHive extends HiveObject {
   }
 
   _loadWeatherDays() async {
+    var _locationsBox = Hive.box<LocationsHive>('box_for_locations');
     weatherDays = _locationsBox.values.firstWhere((element) => element.locationName == locationName).weatherDays;
   }
 
   _fillWeatherDays(Map body) async {
+    var _locationsBox = Hive.box<LocationsHive>('box_for_locations');
     weatherDays = _locationsBox.values.firstWhere((element) => element.locationName == locationName).weatherDays;
     body["list"].forEach((day) =>
     {
@@ -105,6 +104,7 @@ class LocationsHive extends HiveObject {
     _updateBox();
   }
   _updateBox() {
+    var _locationsBox = Hive.box<LocationsHive>('box_for_locations');
     _locationsBox.putAt(_locationsBox.values.toList().indexWhere((element) => element.locationName == locationName), LocationsHive(name, locationName, favourite, weatherDays));
   }
 }

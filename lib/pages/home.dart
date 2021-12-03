@@ -34,20 +34,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = NeumorphicTheme.currentTheme(context);
+    final baseColor = theme.baseColor;
+    final accentColor = theme.accentColor;
     return Scaffold(
         key: _scaffoldKey,
         backgroundColor: Colors.lightBlue,
         drawer: Drawer(
           child: Container(
-            color: const Color(0xFFE2EBFF),
+            color: baseColor,
             child: ListView(
               padding: EdgeInsets.zero,
               children: <Widget>[
-                const Padding(padding: EdgeInsets.only(top: 30, left: 20, bottom: 20),
+                Padding(padding: const EdgeInsets.only(top: 30, left: 20, bottom: 20),
                   child: Text(
                     'Weather App',
                     style: TextStyle(
-                      color: Colors.black,
+                      color: accentColor,
                       fontWeight: FontWeight.normal,
                       fontSize: 24,
                       fontFamily: 'Manrope',
@@ -55,22 +58,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.settings),
-                  title: const Text('Настройки'),
+                  leading: Icon(Icons.settings, color: accentColor,),
+                  title: Text('Настройки', style: TextStyle(color: accentColor),),
                   onTap: () => _toSettingsPage(context)
                 ),
                 ListTile(
-                  leading: const Icon(Icons.favorite_border),
-                  title: const Text('Избранные'),
+                  leading: Icon(Icons.favorite_border, color: accentColor,),
+                  title: Text('Избранные', style: TextStyle(color: accentColor)),
                   onTap: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context)=> FavouritePage(items: homeData.locations.where((i) => i.isFavorite).toList()),
+                    MaterialPageRoute(builder: (context)=> const FavouritePage(),
                     ),
                   ),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.account_circle),
-                  title: const Text('О приложении'),
+                  leading: Icon(Icons.account_circle, color: accentColor,),
+                  title: Text('О приложении', style: TextStyle(color: accentColor)),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context)=> const AboutPage(),
@@ -83,13 +86,24 @@ class _MyHomePageState extends State<MyHomePage> {
         ), // Left Panel
         body: Stack(
           children: <Widget>[
-            Container(
+            if (!NeumorphicTheme.of(context)!.isUsingDark) Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(
                       'assets/image0.png'),
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
+            if (NeumorphicTheme.of(context)!.isUsingDark) Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                      'assets/image1.png'),
                   fit: BoxFit.fill,
                 ),
               ),

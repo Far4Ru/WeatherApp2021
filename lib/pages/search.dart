@@ -46,13 +46,16 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = NeumorphicTheme.currentTheme(context);
+    final baseColor = theme.baseColor;
+    final accentColor = theme.accentColor;
     return Scaffold(
       body: Stack(
         children: <Widget>[
           Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            color: const Color(0xFFDEE9FF),
+            color: baseColor,
           ),
           ValueListenableBuilder(
             valueListenable: Hive.box<LocationsHive>('box_for_locations').listenable(),
@@ -68,9 +71,10 @@ class _SearchPageState extends State<SearchPage> {
                       children: [
                         IconButton(
                           onPressed: () => _toHomePage(context, ""),
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.keyboard_arrow_left,
                             size: 20,
+                            color: accentColor,
                           ),
                         ),
                         SizedBox(
@@ -83,8 +87,10 @@ class _SearchPageState extends State<SearchPage> {
                               suffixIcon: IconButton(
                                 onPressed: _controller.clear,
                                 icon: const Icon(Icons.cancel),
+                                color: accentColor,
                               ),
                             ),
+                            style: TextStyle(color: accentColor),
                           ),
                         ),
                       ],
@@ -117,8 +123,7 @@ class _SearchPageState extends State<SearchPage> {
                                         child: Text(
                                           searchItems[index].name,
                                           textAlign: TextAlign.left,
-                                          style: const TextStyle(
-                                              fontSize: 24),
+                                          style: TextStyle(fontSize: 24, color: accentColor),
                                           maxLines: 1,
                                         ),
                                         decoration: const BoxDecoration(
@@ -137,7 +142,7 @@ class _SearchPageState extends State<SearchPage> {
                                               searchItems[index].favourite
                                                   ? Icons.star
                                                   : Icons.star_border,
-                                              color: const Color(0xFF323232),
+                                              color: accentColor,
                                               size: 30.0,
                                             )
                                         ),

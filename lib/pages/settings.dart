@@ -18,13 +18,18 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isChecked = NeumorphicTheme.of(context)!.isUsingDark;
+    bool isEnabled = true;
+    final theme = NeumorphicTheme.currentTheme(context);
+    final baseColor = theme.baseColor;
+    final accentColor = theme.accentColor;
     return Scaffold(
       body: Stack(
         children: <Widget>[
           Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            color: const Color(0xFFDEE9FF),
+            color: baseColor,
           ),
           Container(
             margin: const EdgeInsets.only(top: 25),
@@ -39,13 +44,13 @@ class _SettingsPageState extends State<SettingsPage> {
                         Icons.arrow_back_ios,
                       ),
                     ),
-                    const SizedBox(
+                    SizedBox(
                         child: Text(
                           'Настройки',
                           style: TextStyle(
                               fontSize: 28.0,
                               fontFamily: 'Roboto',
-                              color: Colors.black
+                              color: accentColor
                           ),
                         )
                     )
@@ -60,6 +65,16 @@ class _SettingsPageState extends State<SettingsPage> {
                       }
                   ),
                 ),
+                NeumorphicSwitch(
+                  isEnabled: isEnabled,
+                  value: isChecked,
+                  onChanged: (value) {
+                    setState(() {
+                      NeumorphicTheme.of(context)!.themeMode = NeumorphicTheme.of(context)!.isUsingDark ? ThemeMode.light : ThemeMode.dark;
+                      // isChecked = value;
+                    });
+                  },
+                ),
                 ValueListenableBuilder(
                   valueListenable: Hive.box<LocationsHive>('box_for_locations').listenable(),
                   builder: (context, Box<LocationsHive> box, _) {
@@ -72,8 +87,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       onPressed: () => box.values.forEach((location) => {
                         location.weatherDays.forEach((element) {if (element.isInBox) element.delete();})
                       }),
-                      child: const Text("Очистить данные", style: TextStyle(
-                          fontWeight: FontWeight.w500)),
+                      child: Text("Очистить данные", style: TextStyle(
+                          fontWeight: FontWeight.w500, color: accentColor)),
                     );
                   }
                 ),
@@ -86,9 +101,12 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Widget _buildParameterCard(BuildContext context, SettingsParameter parameters) {
+    final theme = NeumorphicTheme.currentTheme(context);
+    final baseColor = theme.baseColor;
+    final accentColor = theme.accentColor;
     return Row(
         children: [
-          Text(parameters.parameter.name),
+          Text(parameters.parameter.name, style: TextStyle(color: accentColor)),
           Expanded(
             child: NeumorphicToggle(
               height: 40,

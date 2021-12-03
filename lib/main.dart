@@ -22,12 +22,22 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const NeumorphicApp(
       title: 'My Weather App',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
+      themeMode: ThemeMode.light,
+      theme: NeumorphicThemeData(
+        baseColor: Color(0xFFDEE9FF),
+        accentColor: Colors.black,
+        // lightSource: LightSource.topLeft,
+        // depth: 10,
       ),
-      home: const MyHomePage(title: ''),
+      darkTheme: NeumorphicThemeData(
+        baseColor: Color(0xFF0D172B),
+        accentColor: Colors.white,
+        // lightSource: LightSource.topLeft,
+        // depth: 6,
+      ),
+      home: MyHomePage(title: ''),
     );
   }
 }
