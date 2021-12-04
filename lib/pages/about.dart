@@ -27,6 +27,7 @@ class AboutPage extends StatelessWidget {
                       icon: const Icon(
                         Icons.arrow_back_ios,
                       ),
+                      color: accentColor,
                     ),
                     SizedBox(
                         child: Text(
@@ -155,6 +156,6 @@ class AboutPage extends StatelessWidget {
     );
   }
   void _navigateToPreviousPage(BuildContext context) {
-    Navigator.of(context).pop(MaterialPageRoute(builder: (context) => const MyHomePage(title: "Погода")));
+    Navigator.of(context).pop(MaterialPageRoute(builder: (context) => const MyHomePage()));
   }
 }

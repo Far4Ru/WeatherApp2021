@@ -43,6 +43,7 @@ class _FavouritePageState extends State<FavouritePage> {
                       icon: const Icon(
                         Icons.arrow_back_ios,
                       ),
+                      color: accentColor,
                     ),
                     SizedBox(
                         child: Text(
@@ -145,6 +146,6 @@ class _FavouritePageState extends State<FavouritePage> {
   }
 
   void _navigateToPreviousPage(BuildContext context) {
-    Navigator.of(context).pop(MaterialPageRoute(builder: (context) => const MyHomePage(title: "Погода")));
+    Navigator.of(context).pop(MaterialPageRoute(builder: (context) => const MyHomePage()));
   }
 }

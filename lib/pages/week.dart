@@ -156,7 +156,7 @@ class _WeekPageState extends State<WeekPage> {
   }
 
   void _navigateToPreviousPage(BuildContext context) {
-    Navigator.of(context).pop(MaterialPageRoute(builder: (context) => const MyHomePage(title: "Погода")));
+    Navigator.of(context).pop(MaterialPageRoute(builder: (context) => const MyHomePage()));
   }
 
   Widget _buildCard(BuildContext context, WeatherDayHive weatherDay) {

@@ -126,4 +126,13 @@ class AppSettings {
     location = prefs.getString("location") ?? "";
     return location;
   }
+
+  changeTheme() async {
+    if (theme == "dark") {
+      theme = "light";
+    } else {
+      theme = "dark";
+    }
+    updateTheme();
+  }
 }

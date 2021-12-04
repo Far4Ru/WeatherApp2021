@@ -7,7 +7,8 @@ import 'package:weather_app/models/locations.dart';
 
 class SettingsPage extends StatefulWidget {
   final List<SettingsParameter> parameters;
-  const SettingsPage({Key? key, required this.parameters}) : super(key: key);
+  final AppSettings appSettings;
+  const SettingsPage({Key? key, required this.parameters, required this.appSettings}) : super(key: key);
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -43,6 +44,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       icon: const Icon(
                         Icons.arrow_back_ios,
                       ),
+                      color: accentColor,
                     ),
                     SizedBox(
                         child: Text(
@@ -71,6 +73,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   onChanged: (value) {
                     setState(() {
                       NeumorphicTheme.of(context)!.themeMode = NeumorphicTheme.of(context)!.isUsingDark ? ThemeMode.light : ThemeMode.dark;
+                      widget.appSettings.changeTheme();
                       // isChecked = value;
                     });
                   },

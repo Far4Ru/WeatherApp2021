@@ -111,12 +111,19 @@ class HomeData {
     LocationsHive("Лондон", "London", false, [])
   ];
 
-  HomeData () {
+  HomeData ();
+
+  Future updateAll() async {
     for (var element in settingsParameters) {
-      element.update();
+      await element.update();
     }
-    appSettings.update();
-    updateLocations();
+    await appSettings.update();
+    await updateLocations();
+    return Future.delayed(
+      const Duration(seconds: 3),
+          () => true,
+    );
+    return true;
   }
 
   updateLocations() {
