@@ -232,137 +232,137 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             ValueListenableBuilder(
-      valueListenable: Hive.box<LocationsHive>('box_for_locations').listenable(),
-      builder: (context, Box<LocationsHive> box, _) {
-        if (box.values.isEmpty) {
-          return const Center(
-          child: Text("No data"),
-        );
-      }
-      LocationsHive location = box.values.firstWhere((element) => element.locationName == homeData.appSettings.location);
-      List<WeatherDayHive> day = location.weatherDays;
-      DateTime now = DateTime.now();
-      WeatherDayHive dayNow = WeatherDayHive(0, [], "");
-      List<WeatherDayHive> dayList = [];
-      List<DayAdditionalDetailHive> dayDetails = [];
-      String thermometer = "";
-      int beforeNow = DateTime(now.year, now.month, now.day, now.hour - 3).millisecondsSinceEpoch;
-      int afterNow = DateTime(now.year, now.month, now.day + 1, 1).millisecondsSinceEpoch;
-      if (day.isNotEmpty) {
-        dayNow = day.firstWhere(
-          (element) =>
-          element.datetime > beforeNow &&
-          element.datetime < afterNow,
-          orElse: () => WeatherDayHive(0, [], "")
-        );
+              valueListenable: Hive.box<LocationsHive>('box_for_locations').listenable(),
+              builder: (context, Box<LocationsHive> box, _) {
+                if (box.values.isEmpty) {
+                  return const Center(
+                  child: Text("No data"),
+                );
+              }
+              LocationsHive location = box.values.firstWhere((element) => element.locationName == homeData.appSettings.location);
+              List<WeatherDayHive> day = location.weatherDays;
+              DateTime now = DateTime.now();
+              WeatherDayHive dayNow = WeatherDayHive(0, [], "");
+              List<WeatherDayHive> dayList = [];
+              List<DayAdditionalDetailHive> dayDetails = [];
+              String thermometer = "";
+              int beforeNow = DateTime(now.year, now.month, now.day, now.hour - 3).millisecondsSinceEpoch;
+              int afterNow = DateTime(now.year, now.month, now.day + 1, 1).millisecondsSinceEpoch;
+              if (day.isNotEmpty) {
+                dayNow = day.firstWhere(
+                  (element) =>
+                  element.datetime > beforeNow &&
+                  element.datetime < afterNow,
+                  orElse: () => WeatherDayHive(0, [], "")
+                );
 
-        if (dayNow.details.isEmpty) {
-          return const Center(
-            child: Text("No data"),
-          );
-        }
-        dayList = day.where(
-          (element) =>
-          element.datetime > beforeNow &&
-          element.datetime < afterNow
-        ).toList();
-        dayDetails = dayNow.details;
-      }
-      return Positioned(
-          bottom: 00,
-          width: MediaQuery.of(context).size.width,
-          height: _bottomPanelHeight,
-          child: Container (
-              decoration: const BoxDecoration(
-                color: Color(0xFFE2EBFF),
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(20.0),
-                    bottomRight: Radius.circular(0.0),
-                    topLeft: Radius.circular(20.0),
-                    bottomLeft: Radius.circular(0.0)),
-              ),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onVerticalDragStart: (details){
-                        _changeBottomPanelState();
-                      },
-                      child: Container(
-                        height: 30,
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        color: const Color(0xFFE2EBFF),
-                        child: SizedBox(
-                          height: 30,
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(
-                              children: [
-                                Container(
-                                    width: 80,
-                                    height: 3.3,
-                                    margin: const EdgeInsets.only(top: 10),
-                                    decoration: const BoxDecoration(
-                                      color: Colors.blue,
-                                    )
+                if (dayNow.details.isEmpty) {
+                  return const Center(
+                    child: Text("No data"),
+                  );
+                }
+                dayList = day.where(
+                  (element) =>
+                  element.datetime > beforeNow &&
+                  element.datetime < afterNow
+                ).toList();
+                dayDetails = dayNow.details;
+              }
+              return Positioned(
+                  bottom: 00,
+                  width: MediaQuery.of(context).size.width,
+                  height: _bottomPanelHeight,
+                  child: Container (
+                      decoration: BoxDecoration(
+                        color: baseColor,
+                        borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(20.0),
+                            bottomRight: Radius.circular(0.0),
+                            topLeft: Radius.circular(20.0),
+                            bottomLeft: Radius.circular(0.0)),
+                      ),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          children: [
+                            GestureDetector(
+                              onVerticalDragStart: (details){
+                                _changeBottomPanelState();
+                              },
+                              child: Container(
+                                height: 30,
+                                width: MediaQuery.of(context).size.width * 0.8,
+                                color: baseColor,
+                                child: SizedBox(
+                                  height: 30,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Column(
+                                      children: [
+                                        Container(
+                                            width: 80,
+                                            height: 3.3,
+                                            margin: const EdgeInsets.only(top: 10),
+                                            decoration: const BoxDecoration(
+                                              color: Colors.blue,
+                                            )
+                                        ),
+                                      ]
+                                  ),
                                 ),
-                              ]
-                          ),
+                              ),
+                            ),
+                            if (_bottomPanelHeight > 400) Text(
+                              DateFormat("d LLLL").format(DateTime.now()),
+                              style: TextStyle(
+                                  fontSize: 22.0,
+                                  fontFamily: 'Manrope',
+                                  color: accentColor
+                              ),
+                            ),
+                            SizedBox(
+                              height: 180.0,
+                              width: MediaQuery.of(context).size.width,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: dayList.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return _buildVerticalCard(context, dayList[index]);
+                                }
+                              )
+                            ),
+                            if (_bottomPanelHeight > 400) SizedBox (
+                              width: MediaQuery.of(context).size.width,
+                              child: Column(
+                                children: [
+                                  Row (
+                                    children: [
+                                      _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "thermometer")),
+                                      _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "humidity"))
+                                    ],
+                                  ),
+                                  Row (
+                                    children: [
+                                      _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "breeze")),
+                                      _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "barometer"))
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            OutlinedButton(
+                              onPressed: () async => _toWeekPage(context, await homeData.appSettings.getLocation()),
+                              child: const Text('Прогноз на неделю', style: TextStyle(color: Color(0xFF038CFE))),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(width: 1.5, color: Color(0xFF038CFE)),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ),
-                    if (_bottomPanelHeight > 400) Text(
-                      DateFormat("d LLLL").format(DateTime.now()),
-                      style: const TextStyle(
-                          fontSize: 22.0,
-                          fontFamily: 'Manrope',
-                          color: Colors.black
-                      ),
-                    ),
-                    SizedBox(
-                      height: 180.0,
-                      width: MediaQuery.of(context).size.width,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: dayList.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return _buildVerticalCard(context, dayList[index]);
-                        }
                       )
-                    ),
-                    if (_bottomPanelHeight > 400) SizedBox (
-                      width: MediaQuery.of(context).size.width,
-                      child: Column(
-                        children: [
-                          Row (
-                            children: [
-                              _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "thermometer")),
-                              _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "humidity"))
-                            ],
-                          ),
-                          Row (
-                            children: [
-                              _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "breeze")),
-                              _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "barometer"))
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    OutlinedButton(
-                      onPressed: () => _toWeekPage(context),
-                      child: const Text('Прогноз на неделю', style: TextStyle(color: Color(0xFF038CFE))),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(width: 1.5, color: Color(0xFF038CFE)),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-          )
-      );
-      }
-    ),
+                  )
+              );
+              }
+            ),
           ],
       )
     );
@@ -394,11 +394,14 @@ class _MyHomePageState extends State<MyHomePage> {
         }
     );
   }
-  void _toWeekPage(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const WeekPage()));
+  void _toWeekPage(BuildContext context, String locationName) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => WeekPage(locationName: locationName)));
   }
 
   Widget _buildVerticalCard(BuildContext context, WeatherDayHive details) {
+    final theme = NeumorphicTheme.currentTheme(context);
+    final baseColor = theme.baseColor;
+    final accentColor = theme.accentColor;
     DayAdditionalDetailHive temperature = DayAdditionalDetailHive("thermometer", "10", "\u00B0C", "assets/icon_sun.png");
     if(details.details.isNotEmpty) {
       temperature = details.details.firstWhere(
@@ -408,15 +411,15 @@ class _MyHomePageState extends State<MyHomePage> {
     return Container(
         height: 120,
         width: 70,
-        decoration: const BoxDecoration(
-          color: Color(0xFFE0E9FD),
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          color: baseColor,
+          borderRadius: const BorderRadius.only(
               topRight: Radius.circular(10.0),
               bottomRight: Radius.circular(10.0),
               topLeft: Radius.circular(10.0),
               bottomLeft: Radius.circular(10.0)
           ),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.grey,
               spreadRadius: 1,
@@ -430,19 +433,19 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             Text(
               DateFormat.Hm().format(DateTime.fromMillisecondsSinceEpoch(details.datetime)),
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 16.0,
                   fontFamily: 'Roboto',
-                  color: Colors.black
+                  color: accentColor
               ),
             ),
             Tab(icon: Image.asset(details.icon, width: 40, height: 40,)),
             Text(
               homeData.getValue("thermometer",double.parse(temperature.value).round().toString(),temperature.unit) + " " + homeData.getUnit("thermometer", temperature.unit),
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 16.0,
                   fontFamily: 'Roboto',
-                  color: Colors.black
+                  color: accentColor
               ),
             ),
           ],
@@ -450,18 +453,21 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
   Widget _buildHorizontalCard(BuildContext context, DayAdditionalDetailHive details) {
+    final theme = NeumorphicTheme.currentTheme(context);
+    final baseColor = theme.baseColor;
+    final accentColor = theme.accentColor;
     return Container(
         height: 70,
         width: 150,
-        decoration: const BoxDecoration(
-          color: Color(0xFFE2EBFF),
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          color: baseColor,
+          borderRadius: const BorderRadius.only(
               topRight: Radius.circular(10.0),
               bottomRight: Radius.circular(10.0),
               topLeft: Radius.circular(10.0),
               bottomLeft: Radius.circular(10.0)
           ),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.grey,
               spreadRadius: 2,
@@ -476,18 +482,18 @@ class _MyHomePageState extends State<MyHomePage> {
             Tab(icon: Image.asset(details.icon, width: 40, height: 40,)),
             Text(
               homeData.getValue(details.type,details.value,details.unit) + " ",
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 16.0,
                   fontFamily: 'Roboto',
-                  color: Colors.black
+                  color: accentColor
               ),
             ),
             Text(
               homeData.getUnit(details.type, details.unit),
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 16.0,
                   fontFamily: 'Roboto',
-                  color: Colors.black
+                  color: accentColor
               ),
             ),
           ],

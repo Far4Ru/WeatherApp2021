@@ -2,14 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:storyswiper/storyswiper.dart';
 import 'package:weather_app/models/locations.dart';
 import 'home.dart';
 
-class WeekPage extends StatelessWidget {
+class WeekPage extends StatefulWidget {
+  final String locationName;
+  const WeekPage({Key? key, required this.locationName}) : super(key: key);
 
-  const WeekPage({Key? key}) : super(key: key);
+  @override
+  State<WeekPage> createState() => _WeekPageState();
+}
 
+class _WeekPageState extends State<WeekPage> {
   @override
   Widget build(BuildContext context) {
     final theme = NeumorphicTheme.currentTheme(context);
@@ -52,12 +58,36 @@ class WeekPage extends StatelessWidget {
           ValueListenableBuilder(
             valueListenable: Hive.box<LocationsHive>('box_for_locations').listenable(),
             builder: (context, Box<LocationsHive> box, _) {
-              if (box.values.isEmpty) {
+              if (box.values.isEmpty && widget.locationName.isNotEmpty) {
                 return const Center(
                   child: Text("No data"),
                 );
               }
-
+              LocationsHive location = box.values.firstWhere((element) => element.locationName == widget.locationName);
+              List<WeatherDayHive> day = location.weatherDays;
+              DateTime now = DateTime.now();
+              List<WeatherDayHive> weekArray = [];
+              List<WeatherDayHive> displayWeekArray = [];
+              int beforeNow = DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
+              int afterNow = DateTime(now.year, now.month, now.day+8).millisecondsSinceEpoch;
+              if (day.isNotEmpty) {
+                weekArray = day.where(
+                    (element) =>
+                    element.datetime > beforeNow &&
+                    element.datetime < afterNow
+                ).toList();
+                for (var element in weekArray) {
+                  if (DateTime.fromMillisecondsSinceEpoch(element.datetime).hour == 15) {
+                    displayWeekArray.add(element);
+                  }
+                }
+                // if (weekArray.details.isEmpty) {
+                //   return const Center(
+                //     child: Text("No data"),
+                //   );
+                // }
+                // thermometer = double.parse(dayNow.details.firstWhere((element) => element.type=="thermometer").value).round().toString();
+              }
               const List<Color> colors = [
                 Colors.red,
                 Colors.orange,
@@ -92,7 +122,7 @@ class WeekPage extends StatelessWidget {
               return SizedBox(
                 height: 410,
                 child: StorySwiper.builder(
-                  itemCount: colors.length,
+                  itemCount: displayWeekArray.length,
                   aspectRatio: 5 / 6,
                   depthFactor: 0.2,
                   dx: 10,
@@ -101,7 +131,7 @@ class WeekPage extends StatelessWidget {
                   verticalPadding: 0,
                   visiblePageCount: 3,
                   widgetBuilder: (index) {
-                    return _buildCard(context);
+                    return _buildCard(context, displayWeekArray[index]);
                   },
                 ),
               );
@@ -124,11 +154,16 @@ class WeekPage extends StatelessWidget {
         )
     );
   }
+
   void _navigateToPreviousPage(BuildContext context) {
     Navigator.of(context).pop(MaterialPageRoute(builder: (context) => const MyHomePage(title: "Погода")));
   }
-  
-  Widget _buildCard(BuildContext context) {
+
+  Widget _buildCard(BuildContext context, WeatherDayHive weatherDay) {
+    DayAdditionalDetailHive thermometer = weatherDay.details.firstWhere((element) => element.type == "thermometer");
+    DayAdditionalDetailHive humidity = weatherDay.details.firstWhere((element) => element.type == "humidity");
+    DayAdditionalDetailHive breeze = weatherDay.details.firstWhere((element) => element.type == "breeze");
+    DayAdditionalDetailHive barometer = weatherDay.details.firstWhere((element) => element.type == "barometer");
     return Container(
       //color: Colors.lightBlueAccent,
         margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
@@ -162,8 +197,8 @@ class WeekPage extends StatelessWidget {
                   children: [
                     Container(
                       margin: const EdgeInsets.only(top: 25.0, left: 30.0, bottom: 15.0),
-                      child: const Text("23 сентября",
-                        style: TextStyle(
+                      child: Text(DateFormat("d LLLL").format(DateTime.fromMillisecondsSinceEpoch(weatherDay.datetime)),
+                        style: const TextStyle(
                             fontSize: 28.0,
                             fontFamily: 'Roboto',
                             color: Colors.black
@@ -174,31 +209,31 @@ class WeekPage extends StatelessWidget {
               ),
               Row(
                   children: [
-                    Tab(icon: Image.asset("assets/partly_cloudy.png", width: 100, height:100)),
+                    Tab(icon: Image.asset(weatherDay.icon, width: 100, height:100)),
                   ]
               ),
               Row(
                   children: [
-                    Tab(icon: Image.asset("assets/thermometer.png", width: 100, height:100)),
-                    const Text("8\u00B0C"),
+                    Tab(icon: Image.asset(thermometer.icon, width: 100, height:100)),
+                    Text(thermometer.value + " " + thermometer.unit),
                   ]
               ),
               Row(
                   children: [
-                    Tab(icon: Image.asset("assets/breeze.png", width: 100, height:100)),
-                    const Text("9м/с"),
+                    Tab(icon: Image.asset(breeze.icon, width: 100, height:100)),
+                    Text(breeze.value + " " + breeze.unit),
                   ]
               ),
               Row(
                   children: [
-                    Tab(icon: Image.asset("assets/humidity.png", width: 100, height:100)),
-                    const Text("87%"),
+                    Tab(icon: Image.asset(humidity.icon, width: 100, height:100)),
+                    Text(humidity.value + " " + humidity.unit),
                   ]
               ),
               Row(
                   children: [
-                    Tab(icon: Image.asset("assets/barometer.png", width: 100, height:100)),
-                    const Text("761мм.рт.ст"),
+                    Tab(icon: Image.asset(barometer.icon, width: 100, height:100)),
+                    Text(barometer.value + " " + barometer.unit),
                   ]
               ),
             ]

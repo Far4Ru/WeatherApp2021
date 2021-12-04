@@ -66,11 +66,11 @@ class LocationsHive extends HiveObject {
     body["list"].forEach((day) =>
     {
       if (
-      weatherDays
+        weatherDays
           .where(
-              (element) =>
-          element.datetime == day["dt"]
-      )
+            (element) =>
+            element.datetime == day["dt"]
+          )
           .toList()
           .isEmpty
       ) weatherDays.add(
