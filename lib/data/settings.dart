@@ -128,11 +128,7 @@ class AppSettings {
   }
 
   changeTheme() async {
-    if (theme == "dark") {
-      theme = "light";
-    } else {
-      theme = "dark";
-    }
+    theme = theme == "dark" ? "light" : "dark";
     updateTheme();
   }
 }

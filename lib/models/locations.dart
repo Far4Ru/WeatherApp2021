@@ -37,6 +37,7 @@ class LocationsHive extends HiveObject {
       final response = await http.get(Uri.parse(url + locationName + urlParams));
       if (response.statusCode == 200) {
         _fillWeatherDays(json.decode(response.body));
+        print("Updated");
       } else {
         throw Exception('Failed to load data');
       }
@@ -46,9 +47,9 @@ class LocationsHive extends HiveObject {
   checkWeatherToday() {
     DateTime now = DateTime.now();
     int beforeNow = DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
-    int afterNow = DateTime(now.year, now.month, now.day+1).millisecondsSinceEpoch;
+    int afterNow = DateTime(now.year, now.month, now.day+5).millisecondsSinceEpoch;
     var today = weatherDays.where((weatherDay) => weatherDay.datetime > beforeNow && weatherDay.datetime < afterNow);
-    if (today.isNotEmpty) {
+    if (today.length >= 80) {
       return true;
     } else {
       return false;
