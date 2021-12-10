@@ -102,16 +102,8 @@ class AppSettings {
   AppSettings(this.theme, this.location);
 
   update() async{
-    if (theme.isEmpty && location.isEmpty) await setDefault();
-    if (getTheme().toString().isEmpty) await updateTheme();
-    if (getLocation().toString().isEmpty) await updateLocation();
-  }
-
-  setDefault() async {
-    theme = "Light";
-    await updateTheme();
-    location = "Moscow";
-    await updateLocation();
+    if ((await getTheme()).isEmpty) await updateTheme();
+    if ((await getLocation()).isEmpty) await updateLocation();
   }
 
   updateTheme() async {
@@ -124,14 +116,15 @@ class AppSettings {
     prefs.setString("location", location);
   }
 
-  getTheme() async {
+  Future<String> getTheme() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    theme = prefs.getString("theme") ?? "";
+    theme = prefs.getString("theme") ?? theme;
     return theme;
   }
-  getLocation() async {
+
+  Future<String> getLocation() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    location = prefs.getString("location") ?? "";
+    location = prefs.getString("location") ?? location;
     return location;
   }
 

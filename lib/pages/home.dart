@@ -65,101 +65,33 @@ class _MyHomePageState extends State<MyHomePage> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
 
-    _bottomPanelMinHeight = height * 256 / 640;
-    _bottomPanelMaxHeight = height * 450 / 640;
+    _bottomPanelMinHeight = height * 256 / templateHeight;
+    _bottomPanelMaxHeight = height * 450 / templateHeight;
     _bottomPanelHeight = _bottomPanelHeight == 0 ? _bottomPanelMaxHeight : _bottomPanelHeight;
-    dateFormatLarge = DateFormat("d LLL y", 'ru_Ru');
-    dateFormatShort = DateFormat("d LLLL", 'ru_Ru');
+    dateFormatLarge = DateFormat("d LLL y", 'ru_RU');
+    dateFormatShort = DateFormat("d LLLL", 'ru_RU');
 
     return FutureBuilder(
-        future: homeData.updateAll(), // the function to get your data from firebase or firestore
+        future: homeData.updateAll(),
         builder : (BuildContext context, AsyncSnapshot snap){
           if(snap.data == null){
-            return Scaffold(
-              body: Center(
-                child: Column(
-                    children: const [
-                      Text(
-                        'Weather',
-                        style: TextStyle(fontSize:24, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        child: CircularProgressIndicator(),
-                        width: 60,
-                        height: 60,
-                      ),
-                    ]
-                ),
-              ),
-            );
+            return _buildLoadingScreen(context);
           }
           else{
             return Scaffold(
                 key: _scaffoldKey,
-                drawer: Drawer(
-                  child: Container(
-                    color: colors["background"],
-                    child: ListView(
-                      padding: EdgeInsets.zero,
-                      children: <Widget>[
-                        Padding(padding: const EdgeInsets.only(top: 30, left: 20, bottom: 20),
-                          child: Text(
-                            'Weather App',
-                            style: TextStyle(
-                              color: colors["textBase"],
-                              fontWeight: FontWeight.normal,
-                              fontSize: 24,
-                              fontFamily: 'Manrope',
-                            ),
-                          ),
-                        ),
-                        ListTile(
-                            leading: Icon(Icons.settings, color: colors["textBase"],),
-                            title: Text('Настройки', style: TextStyle(color: colors["textBase"]),),
-                            onTap: () => _toSettingsPage(context)
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.favorite_border, color: colors["textBase"],),
-                          title: Text('Избранные', style: TextStyle(color: colors["textBase"])),
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context)=> const FavouritePage(),
-                            ),
-                          ),
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.account_circle, color: colors["textBase"],),
-                          title: Text('О приложении', style: TextStyle(color: colors["textBase"])),
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context)=> const AboutPage(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ), // Left Panel
+                drawer: _buildLeftPanel(context),
                 body: Stack(
                   children: <Widget>[
-                    if (!NeumorphicTheme.of(context)!.isUsingDark) Container(
+                    Container(
                       height: height,
                       width: width,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage(
-                              'assets/image0.png'),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    ),
-                    if (NeumorphicTheme.of(context)!.isUsingDark) Container(
-                      height: height,
-                      width: width,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(
-                              'assets/image1.png'),
+                            NeumorphicTheme.of(context)!.isUsingDark ?
+                            'assets/image1.png' : 'assets/image0.png'
+                          ),
                           fit: BoxFit.fill,
                         ),
                       ),
@@ -254,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         }
                     ),
                     Container(
-                      margin: const EdgeInsets.only(top: 42, left: 20),
+                      margin: EdgeInsets.only(top: height * 39 / templateHeight, left: width * 25 / templateWidth),
                       child: NeumorphicButton(
                         onPressed: () => _scaffoldKey.currentState?.openDrawer(),
                         child: Icon(
@@ -271,7 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(top:42, left: 340),
+                      margin: EdgeInsets.only(top: height * 39 / templateHeight, left: width * (templateWidth - 25 - 30) / templateWidth),
                       child: NeumorphicButton(
                         onPressed: () => _toSearchPage(context),
                         child: Icon(
@@ -301,9 +233,16 @@ class _MyHomePageState extends State<MyHomePage> {
                           WeatherDayHive dayNow = WeatherDayHive(0, [], "");
                           List<WeatherDayHive> dayList = [];
                           List<DayAdditionalDetailHive> dayDetails = [];
-                          String thermometer = "";
+                          int nextDay = 0;
+                          int nextHour = now.hour + 12;
+                          if (now.hour >= 15) {
+                            nextDay = 1;
+                            if (nextHour >= 23) {
+                              nextHour -= 24 + 1;
+                            }
+                          }
                           int beforeNow = DateTime(now.year, now.month, now.day, now.hour - 3).millisecondsSinceEpoch;
-                          int afterNow = DateTime(now.year, now.month, now.day + 1, 1).millisecondsSinceEpoch;
+                          int afterNow = DateTime(now.year, now.month, now.day + nextDay, nextHour).millisecondsSinceEpoch;
                           if (day.isNotEmpty) {
                             dayNow = day.firstWhere(
                                     (element) =>
@@ -349,15 +288,15 @@ class _MyHomePageState extends State<MyHomePage> {
                                           },
                                           child: Container(
                                             height: 30,
-                                            width: MediaQuery.of(context).size.width * 0.8,
+                                            width: width * 0.8,
                                             color: colors["background"],
                                             child: SizedBox(
                                               height: 30,
-                                              width: MediaQuery.of(context).size.width,
+                                              width: width,
                                               child: Column(
                                                   children: [
                                                     Container(
-                                                        width: 80,
+                                                        width: width * 60 / templateWidth,
                                                         height: 3.3,
                                                         margin: const EdgeInsets.only(top: 10),
                                                         decoration: BoxDecoration(
@@ -372,39 +311,36 @@ class _MyHomePageState extends State<MyHomePage> {
                                         if (_bottomPanelHeight == _bottomPanelMaxHeight) Text(
                                           dateFormatShort.format(DateTime.now()),
                                           style: TextStyle(
-                                              fontSize: 22.0,
+                                              fontSize: 17.0,
                                               fontFamily: 'Manrope',
                                               color: colors["textBase"]
                                           ),
                                         ),
-                                        SizedBox(
-                                            height: height * 122 / templateHeight,
-                                            width: width,
-                                            child: ListView.builder(
-                                                scrollDirection: Axis.horizontal,
-                                                itemCount: dayList.length,
-                                                itemBuilder: (BuildContext context, int index) {
-                                                  return _buildVerticalCard(context, dayList[index]);
-                                                }
-                                            )
+                                        Container(
+                                          height: height * 122 / templateHeight,
+                                          width: width,
+                                          margin: (_bottomPanelHeight == _bottomPanelMaxHeight) ?
+                                            EdgeInsets.only(top: (height * 32 / templateHeight), bottom: (height * 32 / templateHeight)) :
+                                            EdgeInsets.only(top: (height * 16 / templateHeight), bottom: (height * 16 / templateHeight)),
+                                          child: ListView.builder(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount: dayList.length,
+                                            itemBuilder: (BuildContext context, int index) {
+                                              return _buildVerticalCard(context, dayList[index]);
+                                            }
+                                          )
                                         ),
                                         if (_bottomPanelHeight == _bottomPanelMaxHeight) SizedBox (
                                           width: MediaQuery.of(context).size.width,
                                           child: Column(
-                                            // mainAxisAlignment: MainAxisAlignment
-                                            //     .spaceBetween,
                                             children: [
                                               Row (
-                                                // mainAxisAlignment: MainAxisAlignment
-                                                //     .spaceBetween,
                                                 children: [
                                                   _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "thermometer")),
                                                   _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "humidity"))
                                                 ],
                                               ),
                                               Row (
-                                                // mainAxisAlignment: MainAxisAlignment
-                                                //     .spaceBetween,
                                                 children: [
                                                   _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "breeze")),
                                                   _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "barometer"))
@@ -413,13 +349,19 @@ class _MyHomePageState extends State<MyHomePage> {
                                             ],
                                           ),
                                         ),
-                                        OutlinedButton(
-                                          onPressed: () async => _toWeekPage(context, await homeData.appSettings.getLocation()),
-                                          child: Text('Прогноз на неделю', style: TextStyle(color: colors["toWeekButtonText"])),
-                                          style: OutlinedButton.styleFrom(
-                                            side: BorderSide(width: 1.5, color: (colors["toWeekButtonBorder"])!),
+                                        if (_bottomPanelHeight != _bottomPanelMaxHeight) ButtonTheme(
+                                          minWidth: width * 150 / templateWidth,
+                                          height: height * 35 / templateHeight,
+                                          child: OutlinedButton(
+                                            onPressed: () async => _toWeekPage(context, await homeData.appSettings.getLocation()),
+                                            child: Text('Прогноз на неделю', style: TextStyle(color: colors["toWeekButtonText"])),
+                                            style: OutlinedButton.styleFrom(
+                                              side: BorderSide(width: 1.5, color: (colors["toWeekButtonText"])!),
+                                              backgroundColor: colors["section"]
+                                            ),
                                           ),
                                         ),
+                                        if (_bottomPanelHeight == _bottomPanelMaxHeight) SizedBox(height: height * 65 / templateHeight),
                                       ],
                                     ),
                                   )
@@ -435,6 +377,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
 
   }
+
   void _toSearchPage(BuildContext context) async {
     final result = await Navigator.push(
         context,
@@ -462,12 +405,13 @@ class _MyHomePageState extends State<MyHomePage> {
         }
     );
   }
+
   void _toWeekPage(BuildContext context, String locationName) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) => WeekPage(locationName: locationName)));
   }
 
   Widget _buildVerticalCard(BuildContext context, WeatherDayHive details) {
-    DayAdditionalDetailHive temperature = DayAdditionalDetailHive("thermometer", "10", "\u00B0C", "assets/icon_sun.png");
+    DayAdditionalDetailHive temperature = DayAdditionalDetailHive("thermometer", "10", "\u00B0C", "assets/01d.png");
     if(details.details.isNotEmpty) {
       temperature = details.details.firstWhere(
         (element) => element.type == "thermometer"
@@ -475,8 +419,9 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     return Container(
         width: width * 65 / templateWidth,
+        margin: EdgeInsets.only(left: (width * 20 / templateWidth)),
         decoration: BoxDecoration(
-          color: colors["background"],
+          color: colors["section"],
           borderRadius: const BorderRadius.only(
               topRight: Radius.circular(10.0),
               bottomRight: Radius.circular(10.0),
@@ -492,8 +437,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-        // margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
         child: Column (
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               DateFormat.Hm().format(DateTime.fromMillisecondsSinceEpoch(details.datetime)),
@@ -505,9 +451,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Tab(
               icon: Image.asset(
-                details.icon,
-                width: width * 40 / templateWidth,
-                height: height * 40 / templateHeight
+                getIcon(details.icon),
+                width: width * 64 / templateWidth,
+                height: height * 64 / templateHeight
               )
             ),
             Text(
@@ -522,12 +468,14 @@ class _MyHomePageState extends State<MyHomePage> {
         )
     );
   }
+
   Widget _buildHorizontalCard(BuildContext context, DayAdditionalDetailHive details) {
     return Container(
         height: height * 65 / templateHeight,
         width: width * 150 / templateWidth,
+        margin: EdgeInsets.only(left: (width * 20 / templateWidth), bottom: (height * 7 / templateHeight)),
         decoration: BoxDecoration(
-          color: colors["background"],
+          color: colors["section"],
           borderRadius: const BorderRadius.only(
               topRight: Radius.circular(10.0),
               bottomRight: Radius.circular(10.0),
@@ -543,8 +491,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-        // margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
         child: Row (
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Tab(
               icon: Image.asset(
@@ -566,11 +515,83 @@ class _MyHomePageState extends State<MyHomePage> {
               style: TextStyle(
                   fontSize: 16.0,
                   fontFamily: 'Manrope',
-                  color: colors["textBase"]
+                  color: colors["textSecond"]
               ),
             ),
           ],
         )
+    );
+  }
+
+  Widget _buildLeftPanel(BuildContext context) {
+    return Drawer(
+      child: Container(
+        color: colors["background"],
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            Padding(padding: const EdgeInsets.only(top: 30, left: 20, bottom: 20),
+              child: Text(
+                'Weather App',
+                style: TextStyle(
+                  color: colors["textBase"],
+                  fontWeight: FontWeight.normal,
+                  fontSize: 24,
+                  fontFamily: 'Manrope',
+                ),
+              ),
+            ),
+            ListTile(
+                leading: Icon(Icons.settings, color: colors["textBase"],),
+                title: Text('Настройки', style: TextStyle(color: colors["textBase"]),),
+                onTap: () => _toSettingsPage(context)
+            ),
+            ListTile(
+              leading: Icon(Icons.favorite_border, color: colors["textBase"],),
+              title: Text('Избранные', style: TextStyle(color: colors["textBase"])),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context)=> const FavouritePage(),
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.account_circle, color: colors["textBase"],),
+              title: Text('О приложении', style: TextStyle(color: colors["textBase"])),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context)=> const AboutPage(),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingScreen(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        width: width,
+        height: height,
+        margin:  EdgeInsets.only(top: height * 150 / templateHeight,bottom: height * 299 / templateHeight),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                'Weather',
+                style: TextStyle(fontSize:35, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>((colors["textBase"]!))),
+                width: 42,
+                height: 42,
+              ),
+            ]
+        ),
+      ),
     );
   }
 }

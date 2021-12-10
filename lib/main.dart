@@ -39,14 +39,10 @@ class _MyAppState extends State<MyApp> {
       theme: const NeumorphicThemeData(
         baseColor: Color(0xFFDEE9FF),
         accentColor: Colors.black,
-        // lightSource: LightSource.topLeft,
-        // depth: 10,
       ),
       darkTheme: const NeumorphicThemeData(
         baseColor: Color(0xFF0D172B),
         accentColor: Colors.white,
-        // lightSource: LightSource.topLeft,
-        // depth: 6,
       ),
       home: const MyHomePage(),
     );

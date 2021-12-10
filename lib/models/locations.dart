@@ -22,34 +22,28 @@ class LocationsHive extends HiveObject {
   @HiveField(3)
   List<WeatherDayHive> weatherDays;
 
-  final Map<String, String> _icons = {
-    "thunderstorm" : "assets/icon_lightning.png",
-    "light rain" : "assets/icon_rain.png",
-    "shower rain" : "assets/icon_rain_heavy.png",
-    "clear sky" : "assets/icon_sun.png"
-  };
-
   LocationsHive(this.name, this.locationName, this.favourite, this.weatherDays);
 
-  update() async {
+  Future<bool> update() async {
     await _loadWeatherDays();
     if (locationName.isNotEmpty && !checkWeatherToday()) {
       final response = await http.get(Uri.parse(url + locationName + urlParams));
       if (response.statusCode == 200) {
         _fillWeatherDays(json.decode(response.body));
-        print("Updated");
+        return true;
       } else {
-        throw Exception('Failed to load data');
+        return false;
       }
     }
+    return checkWeatherToday();
   }
 
-  checkWeatherToday() {
+  bool checkWeatherToday() {
     DateTime now = DateTime.now();
     int beforeNow = DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
     int afterNow = DateTime(now.year, now.month, now.day+5).millisecondsSinceEpoch;
     var today = weatherDays.where((weatherDay) => weatherDay.datetime > beforeNow && weatherDay.datetime < afterNow);
-    if (today.length >= 80) {
+    if (today.length >= (8 * 5 - (now.hour + 3) ~/ 3)) {
       return true;
     } else {
       return false;
@@ -70,31 +64,29 @@ class LocationsHive extends HiveObject {
         weatherDays
           .where(
             (element) =>
-            element.datetime == day["dt"]
+            element.datetime == day["dt"] * 1000
           )
           .toList()
           .isEmpty
       ) weatherDays.add(
-          WeatherDayHive(
-              day["dt"] * 1000,
-              [
-                DayAdditionalDetailHive(
-                    "thermometer", day["main"]["temp"].toString(),
-                    "\u00B0C", "assets/thermometer.png"),
-                DayAdditionalDetailHive(
-                    "barometer", day["main"]["pressure"].toString(),
-                    "мм.рт.ст.", "assets/barometer.png"),
-                DayAdditionalDetailHive(
-                    "breeze", day["wind"]["speed"].toString(), "м/с",
-                    "assets/breeze.png"),
-                DayAdditionalDetailHive(
-                    "humidity", day["main"]["humidity"].toString(), "%",
-                    "assets/humidity.png")
-              ],
-              _icons.keys.firstWhere((element) =>
-              element == day["weather"][0]["description"],
-                  orElse: () => "assets/icon_sun.png")
-          )
+        WeatherDayHive(
+          day["dt"] * 1000,
+          [
+            DayAdditionalDetailHive(
+              "thermometer", day["main"]["temp"].toString(),
+              "\u00B0C", "assets/thermometer.png"),
+            DayAdditionalDetailHive(
+              "barometer", day["main"]["pressure"].toString(),
+              "мм.рт.ст.", "assets/barometer.png"),
+            DayAdditionalDetailHive(
+              "breeze", day["wind"]["speed"].toString(), "м/с",
+              "assets/breeze.png"),
+            DayAdditionalDetailHive(
+              "humidity", day["main"]["humidity"].toString(), "%",
+              "assets/humidity.png")
+          ],
+          day["weather"].first["icon"]
+        )
       ),
     });
     _updateBox();

@@ -33,6 +33,11 @@ dev_dependencies:
 
 flutter:
 
+  fonts:
+    - family: Manrope
+      fonts:
+        - asset: fonts/Manrope-Regular.ttf
+          style: normal
   uses-material-design: true
 
   assets:
