@@ -101,9 +101,17 @@ class AppSettings {
 
   AppSettings(this.theme, this.location);
 
-  update() {
-    if (getTheme().toString().isEmpty) updateTheme();
-    if (getLocation().toString().isEmpty) updateLocation();
+  update() async{
+    if (theme.isEmpty && location.isEmpty) await setDefault();
+    if (getTheme().toString().isEmpty) await updateTheme();
+    if (getLocation().toString().isEmpty) await updateLocation();
+  }
+
+  setDefault() async {
+    theme = "Light";
+    await updateTheme();
+    location = "Moscow";
+    await updateLocation();
   }
 
   updateTheme() async {
