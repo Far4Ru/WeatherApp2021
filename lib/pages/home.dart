@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:weather_app/data/values.dart';
 import 'package:weather_app/models/locations.dart';
 // import 'package:expandable_bottom_sheet/expandable_bottom_sheet.dart';
 import 'about.dart';
@@ -19,23 +21,56 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  double _bottomPanelHeight = 300;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   String title = "Город";
   String temperatureUnit = "C";
   HomeData homeData = HomeData();
 
+  late DateFormat dateFormatLarge;
+  late DateFormat dateFormatShort;
+
+  double width = 0;
+  double height = 0;
+
+  double _bottomPanelHeight = 0;
+  double _bottomPanelMinHeight = 0;
+  double _bottomPanelMaxHeight = 0;
+
+  late NeumorphicThemeData theme;
+  late Color baseColor;
+  late Color accentColor;
+
+  late Map<String, Color> colors;
+
   void _changeBottomPanelState() {
     setState(() {
-      _bottomPanelHeight = _bottomPanelHeight == 300 ? 550 : 300;
+      _bottomPanelHeight = _bottomPanelHeight < _bottomPanelMaxHeight ? _bottomPanelMaxHeight : _bottomPanelMinHeight;
     });
-  } // Bottom Panel
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initializeDateFormatting();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = NeumorphicTheme.currentTheme(context);
-    final baseColor = theme.baseColor;
-    final accentColor = theme.accentColor;
+
+    theme = NeumorphicTheme.currentTheme(context);
+    colors = NeumorphicTheme.of(context)!.isUsingDark ? colorsDark : colorsLight;
+    baseColor = theme.baseColor;
+    accentColor = theme.accentColor;
+
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
+
+    _bottomPanelMinHeight = height * 256 / 640;
+    _bottomPanelMaxHeight = height * 450 / 640;
+    _bottomPanelHeight = _bottomPanelHeight == 0 ? _bottomPanelMaxHeight : _bottomPanelHeight;
+    dateFormatLarge = DateFormat("d LLL y", 'ru_Ru');
+    dateFormatShort = DateFormat("d LLLL", 'ru_Ru');
+
     return FutureBuilder(
         future: homeData.updateAll(), // the function to get your data from firebase or firestore
         builder : (BuildContext context, AsyncSnapshot snap){
@@ -61,10 +96,9 @@ class _MyHomePageState extends State<MyHomePage> {
           else{
             return Scaffold(
                 key: _scaffoldKey,
-                backgroundColor: Colors.lightBlue,
                 drawer: Drawer(
                   child: Container(
-                    color: baseColor,
+                    color: colors["background"],
                     child: ListView(
                       padding: EdgeInsets.zero,
                       children: <Widget>[
@@ -72,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: Text(
                             'Weather App',
                             style: TextStyle(
-                              color: accentColor,
+                              color: colors["textBase"],
                               fontWeight: FontWeight.normal,
                               fontSize: 24,
                               fontFamily: 'Manrope',
@@ -80,13 +114,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                         ListTile(
-                            leading: Icon(Icons.settings, color: accentColor,),
-                            title: Text('Настройки', style: TextStyle(color: accentColor),),
+                            leading: Icon(Icons.settings, color: colors["textBase"],),
+                            title: Text('Настройки', style: TextStyle(color: colors["textBase"]),),
                             onTap: () => _toSettingsPage(context)
                         ),
                         ListTile(
-                          leading: Icon(Icons.favorite_border, color: accentColor,),
-                          title: Text('Избранные', style: TextStyle(color: accentColor)),
+                          leading: Icon(Icons.favorite_border, color: colors["textBase"],),
+                          title: Text('Избранные', style: TextStyle(color: colors["textBase"])),
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context)=> const FavouritePage(),
@@ -94,8 +128,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                         ListTile(
-                          leading: Icon(Icons.account_circle, color: accentColor,),
-                          title: Text('О приложении', style: TextStyle(color: accentColor)),
+                          leading: Icon(Icons.account_circle, color: colors["textBase"],),
+                          title: Text('О приложении', style: TextStyle(color: colors["textBase"])),
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context)=> const AboutPage(),
@@ -109,8 +143,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 body: Stack(
                   children: <Widget>[
                     if (!NeumorphicTheme.of(context)!.isUsingDark) Container(
-                      height: MediaQuery.of(context).size.height,
-                      width: MediaQuery.of(context).size.width,
+                      height: height,
+                      width: width,
                       decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage(
@@ -120,8 +154,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     if (NeumorphicTheme.of(context)!.isUsingDark) Container(
-                      height: MediaQuery.of(context).size.height,
-                      width: MediaQuery.of(context).size.width,
+                      height: height,
+                      width: width,
                       decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage(
@@ -171,10 +205,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                     children: <Widget>[
                                       Text(
                                         location.name,
-                                        style: const TextStyle(
-                                            fontSize: 32.0,
+                                        style: TextStyle(
+                                            fontSize: 16.0,
                                             fontFamily: 'Manrope',
-                                            color: Colors.white
+                                            color: colors["mainText"]
                                         ),
                                       ),
                                     ],
@@ -188,10 +222,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                     children: <Widget>[
                                       Text(
                                         homeData.getValue("thermometer",thermometer,"\u00B0C") + homeData.getUnit("thermometer", "\u00B0C"),
-                                        style: const TextStyle(
-                                            fontSize: 72.0,
+                                        style: TextStyle(
+                                            fontSize: 80.0,
                                             fontFamily: 'Manrope',
-                                            color: Colors.white
+                                            color: colors["mainText"]
                                         ),
                                       ),
                                     ],
@@ -204,11 +238,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       Text(
-                                        DateFormat("d LLL y").format(now),
-                                        style: const TextStyle(
-                                            fontSize: 22.0,
+                                        dateFormatLarge.format(now),
+                                        style: TextStyle(
+                                            fontSize: 20.0,
                                             fontFamily: 'Manrope',
-                                            color: Colors.white
+                                            color: colors["mainText"]
                                         ),
                                       )
                                     ],
@@ -223,15 +257,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       margin: const EdgeInsets.only(top: 42, left: 20),
                       child: NeumorphicButton(
                         onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-                        child: const Icon(
+                        child: Icon(
                           Icons.dehaze,
-                          color: Colors.white,
+                          color: colors["mainText"],
                         ),
-                        style: const NeumorphicStyle(
+                        style: NeumorphicStyle(
                           shape: NeumorphicShape.flat,
-                          boxShape: NeumorphicBoxShape.circle(),
+                          boxShape: const NeumorphicBoxShape.circle(),
                           depth: 1,
-                          color: Color(0xFF0256FF),
+                          color: colors["button"],
                           lightSource: LightSource.top,
                         ),
                       ),
@@ -240,15 +274,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       margin: const EdgeInsets.only(top:42, left: 340),
                       child: NeumorphicButton(
                         onPressed: () => _toSearchPage(context),
-                        child: const Icon(
+                        child: Icon(
                           Icons.add_circle_outline,
-                          color: Colors.white,
+                          color: colors["mainText"],
                         ),
-                        style: const NeumorphicStyle(
+                        style: NeumorphicStyle(
                           shape: NeumorphicShape.flat,
-                          boxShape: NeumorphicBoxShape.circle(),
+                          boxShape: const NeumorphicBoxShape.circle(),
                           depth: 1,
-                          color: Color(0xFF0256FF),
+                          color: colors["button"],
                           lightSource: LightSource.top,
                         ),
                       ),
@@ -292,11 +326,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           }
                           return Positioned(
                               bottom: 00,
-                              width: MediaQuery.of(context).size.width,
+                              width: width,
                               height: _bottomPanelHeight,
                               child: Container (
                                   decoration: BoxDecoration(
-                                    color: baseColor,
+                                    color: colors["background"],
                                     borderRadius: const BorderRadius.only(
                                         topRight: Radius.circular(20.0),
                                         bottomRight: Radius.circular(0.0),
@@ -306,6 +340,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   child: SizedBox(
                                     width: MediaQuery.of(context).size.width,
                                     child: Column(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .spaceBetween,
                                       children: [
                                         GestureDetector(
                                           onVerticalDragStart: (details){
@@ -314,7 +350,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           child: Container(
                                             height: 30,
                                             width: MediaQuery.of(context).size.width * 0.8,
-                                            color: baseColor,
+                                            color: colors["background"],
                                             child: SizedBox(
                                               height: 30,
                                               width: MediaQuery.of(context).size.width,
@@ -324,8 +360,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                                         width: 80,
                                                         height: 3.3,
                                                         margin: const EdgeInsets.only(top: 10),
-                                                        decoration: const BoxDecoration(
-                                                          color: Colors.blue,
+                                                        decoration: BoxDecoration(
+                                                          color: colors["line"],
                                                         )
                                                     ),
                                                   ]
@@ -333,17 +369,17 @@ class _MyHomePageState extends State<MyHomePage> {
                                             ),
                                           ),
                                         ),
-                                        if (_bottomPanelHeight > 400) Text(
-                                          DateFormat("d LLLL").format(DateTime.now()),
+                                        if (_bottomPanelHeight == _bottomPanelMaxHeight) Text(
+                                          dateFormatShort.format(DateTime.now()),
                                           style: TextStyle(
                                               fontSize: 22.0,
                                               fontFamily: 'Manrope',
-                                              color: accentColor
+                                              color: colors["textBase"]
                                           ),
                                         ),
                                         SizedBox(
-                                            height: 180.0,
-                                            width: MediaQuery.of(context).size.width,
+                                            height: height * 122 / templateHeight,
+                                            width: width,
                                             child: ListView.builder(
                                                 scrollDirection: Axis.horizontal,
                                                 itemCount: dayList.length,
@@ -352,17 +388,23 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 }
                                             )
                                         ),
-                                        if (_bottomPanelHeight > 400) SizedBox (
+                                        if (_bottomPanelHeight == _bottomPanelMaxHeight) SizedBox (
                                           width: MediaQuery.of(context).size.width,
                                           child: Column(
+                                            // mainAxisAlignment: MainAxisAlignment
+                                            //     .spaceBetween,
                                             children: [
                                               Row (
+                                                // mainAxisAlignment: MainAxisAlignment
+                                                //     .spaceBetween,
                                                 children: [
                                                   _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "thermometer")),
                                                   _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "humidity"))
                                                 ],
                                               ),
                                               Row (
+                                                // mainAxisAlignment: MainAxisAlignment
+                                                //     .spaceBetween,
                                                 children: [
                                                   _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "breeze")),
                                                   _buildHorizontalCard(context, dayDetails.firstWhere((element) => element.type == "barometer"))
@@ -373,9 +415,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                         ),
                                         OutlinedButton(
                                           onPressed: () async => _toWeekPage(context, await homeData.appSettings.getLocation()),
-                                          child: const Text('Прогноз на неделю', style: TextStyle(color: Color(0xFF038CFE))),
+                                          child: Text('Прогноз на неделю', style: TextStyle(color: colors["toWeekButtonText"])),
                                           style: OutlinedButton.styleFrom(
-                                            side: const BorderSide(width: 1.5, color: Color(0xFF038CFE)),
+                                            side: BorderSide(width: 1.5, color: (colors["toWeekButtonBorder"])!),
                                           ),
                                         ),
                                       ],
@@ -425,9 +467,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildVerticalCard(BuildContext context, WeatherDayHive details) {
-    final theme = NeumorphicTheme.currentTheme(context);
-    final baseColor = theme.baseColor;
-    final accentColor = theme.accentColor;
     DayAdditionalDetailHive temperature = DayAdditionalDetailHive("thermometer", "10", "\u00B0C", "assets/icon_sun.png");
     if(details.details.isNotEmpty) {
       temperature = details.details.firstWhere(
@@ -435,10 +474,9 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
     return Container(
-        height: 120,
-        width: 70,
+        width: width * 65 / templateWidth,
         decoration: BoxDecoration(
-          color: baseColor,
+          color: colors["background"],
           borderRadius: const BorderRadius.only(
               topRight: Radius.circular(10.0),
               bottomRight: Radius.circular(10.0),
@@ -454,24 +492,30 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-        margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
+        // margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
         child: Column (
           children: [
             Text(
               DateFormat.Hm().format(DateTime.fromMillisecondsSinceEpoch(details.datetime)),
               style: TextStyle(
-                  fontSize: 16.0,
-                  fontFamily: 'Roboto',
-                  color: accentColor
+                  fontSize: 17.0,
+                  fontFamily: 'Manrope',
+                  color: colors["textBase"]
               ),
             ),
-            Tab(icon: Image.asset(details.icon, width: 40, height: 40,)),
+            Tab(
+              icon: Image.asset(
+                details.icon,
+                width: width * 40 / templateWidth,
+                height: height * 40 / templateHeight
+              )
+            ),
             Text(
               homeData.getValue("thermometer",double.parse(temperature.value).round().toString(),temperature.unit) + " " + homeData.getUnit("thermometer", temperature.unit),
               style: TextStyle(
-                  fontSize: 16.0,
-                  fontFamily: 'Roboto',
-                  color: accentColor
+                  fontSize: 17.0,
+                  fontFamily: 'Manrope',
+                  color: colors["textBase"]
               ),
             ),
           ],
@@ -479,14 +523,11 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
   Widget _buildHorizontalCard(BuildContext context, DayAdditionalDetailHive details) {
-    final theme = NeumorphicTheme.currentTheme(context);
-    final baseColor = theme.baseColor;
-    final accentColor = theme.accentColor;
     return Container(
-        height: 70,
-        width: 150,
+        height: height * 65 / templateHeight,
+        width: width * 150 / templateWidth,
         decoration: BoxDecoration(
-          color: baseColor,
+          color: colors["background"],
           borderRadius: const BorderRadius.only(
               topRight: Radius.circular(10.0),
               bottomRight: Radius.circular(10.0),
@@ -502,24 +543,30 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-        margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
+        // margin: const EdgeInsets.only(top:20, left: 20, bottom: 20, right: 10),
         child: Row (
           children: [
-            Tab(icon: Image.asset(details.icon, width: 40, height: 40,)),
+            Tab(
+              icon: Image.asset(
+                details.icon,
+                width: width * 24 / templateWidth,
+                height: height * 24 / templateHeight
+              )
+            ),
             Text(
               homeData.getValue(details.type,details.value,details.unit) + " ",
               style: TextStyle(
                   fontSize: 16.0,
-                  fontFamily: 'Roboto',
-                  color: accentColor
+                  fontFamily: 'Manrope',
+                  color: colors["textBase"]
               ),
             ),
             Text(
               homeData.getUnit(details.type, details.unit),
               style: TextStyle(
                   fontSize: 16.0,
-                  fontFamily: 'Roboto',
-                  color: accentColor
+                  fontFamily: 'Manrope',
+                  color: colors["textBase"]
               ),
             ),
           ],
