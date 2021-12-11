@@ -14,7 +14,7 @@
 https://openweathermap.org/
 
 ## Установка
-
+--no-sound-null-safety
 <details>
   <summary>Git</summary>
 

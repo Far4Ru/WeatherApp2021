@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:weather_app/data/values.dart';
@@ -11,7 +10,6 @@ import 'settings.dart';
 import 'week.dart';
 import '../data/data.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -23,7 +21,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   String title = "Город";
-  String temperatureUnit = "C";
   HomeData homeData = HomeData();
 
   late DateFormat dateFormatLarge;

@@ -58,6 +58,5 @@ const Map<String, Color> colorsDark = {
 
 
 String getIcon(number) {
-  //String suffix = theme ? "n" : "d";
   return "assets/" + number + ".png";
 }

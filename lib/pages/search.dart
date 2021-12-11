@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:weather_app/models/locations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
+import 'package:http/http.dart' as http;
 
 class SearchPage extends StatefulWidget {
 
@@ -29,6 +32,18 @@ class _SearchPageState extends State<SearchPage> {
         searchItems = items.where((element) => element.name.contains(_name)).toList();
       }
     );
+  }
+  getCities(value) async {
+
+    final response = await http.get(Uri.parse("http://api.geonames.org/postalCodeSearchJSON?postalcode=9011&maxRows=10&username=far4ru"));
+    if (response.statusCode == 200) {
+      print(json.decode(response.body));
+      return true;
+    } else {
+      print(response.statusCode);
+      return false;
+    }
+    print(value);
   }
 
   @override
@@ -80,7 +95,7 @@ class _SearchPageState extends State<SearchPage> {
                         SizedBox(
                           width: 300,
                           height: 35.0,
-                          child: TextFormField(
+                          child: TextField(
                             controller: _controller,
                             decoration: InputDecoration(
                               hintText: 'Введите название города...',
@@ -90,6 +105,9 @@ class _SearchPageState extends State<SearchPage> {
                                 color: accentColor,
                               ),
                             ),
+                            onSubmitted: (value) {
+                              getCities(value);
+                            },
                             style: TextStyle(color: accentColor),
                           ),
                         ),

@@ -77,7 +77,7 @@ class LocationsHive extends HiveObject {
               "\u00B0C", "assets/thermometer.png"),
             DayAdditionalDetailHive(
               "barometer", day["main"]["pressure"].toString(),
-              "мм.рт.ст.", "assets/barometer.png"),
+              "гПа", "assets/barometer.png"),
             DayAdditionalDetailHive(
               "breeze", day["wind"]["speed"].toString(), "м/с",
               "assets/breeze.png"),
