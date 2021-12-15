@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:intl/intl.dart';
+import 'package:weather_app/data/values.dart';
 import 'package:weather_app/models/locations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
@@ -34,16 +36,28 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
   getCities(value) async {
-
-    final response = await http.get(Uri.parse("http://api.geonames.org/postalCodeSearchJSON?postalcode=9011&maxRows=10&username=far4ru"));
+    String parsedData = namesUrl + Uri.encodeComponent(value) + namesUrlParams;
+    final response = await http.get(Uri.parse(parsedData));
     if (response.statusCode == 200) {
-      print(json.decode(response.body));
-      return true;
+      Map body = json.decode(response.body);
+      List<String> places = [];
+      body['postalCodes'].forEach((element) => {
+        if(!places.contains(element['placeName'].replaceAll(RegExp(r'[^a-zA-Zа-яА-Я]'),'')))
+          places.add(element['placeName'].replaceAll(RegExp(r'[^a-zA-Zа-яА-Я]'),''))
+      });
+      List<LocationsHive> placeValues = [];
+      places.forEach((element) {
+        placeValues.add(LocationsHive(Intl.withLocale('ru_RU', () => element), element, false, []));
+      });
+      setState(
+      () {
+        searchItems = placeValues;
+      }
+      );
     } else {
       print(response.statusCode);
       return false;
     }
-    print(value);
   }
 
   @override

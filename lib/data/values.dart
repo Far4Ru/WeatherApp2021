@@ -8,6 +8,9 @@ const String urlParams = "&appid=f802fd908c155491e99f266ff0d443e5&lang=ru&units=
 const double templateHeight = 640;
 const double templateWidth = 360;
 
+const String namesUrl = "http://api.geonames.org/postalCodeSearchJSON?placename=";
+const String namesUrlParams = "&maxRows=10&username=far4ru";
+
 // Manrope
 
 // Colors
