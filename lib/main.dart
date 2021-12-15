@@ -7,7 +7,8 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'models/locations.dart';
 import 'pages/home.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
   // Intl.defaultLocale = 'ru_RU';
@@ -16,7 +17,10 @@ void main() async {
   Hive.registerAdapter(WeatherDayHiveAdapter());
   Hive.registerAdapter(DayAdditionalDetailHiveAdapter());
   await Hive.openBox<LocationsHive>('box_for_locations');
-
+  SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+  // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+  //   statusBarColor: Colors.transparent,
+  // ));
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String theme = prefs.getString("theme") ?? "";
   runApp(MyApp(theme: theme));

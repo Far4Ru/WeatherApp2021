@@ -21,6 +21,11 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final _controller = TextEditingController();
 
+  late NeumorphicThemeData theme;
+  late Color baseColor;
+  late Color accentColor;
+  double width = 0;
+  double height = 0;
   List<LocationsHive> items = [];
 
   String _name = "";
@@ -38,26 +43,23 @@ class _SearchPageState extends State<SearchPage> {
   getCities(value) async {
     String parsedData = namesUrl + Uri.encodeComponent(value) + namesUrlParams;
     final response = await http.get(Uri.parse(parsedData));
+    List<LocationsHive> placeValues = [];
     if (response.statusCode == 200) {
       Map body = json.decode(response.body);
       List<String> places = [];
-      body['postalCodes'].forEach((element) => {
-        if(!places.contains(element['placeName'].replaceAll(RegExp(r'[^a-zA-Zа-яА-Я]'),'')))
-          places.add(element['placeName'].replaceAll(RegExp(r'[^a-zA-Zа-яА-Я]'),''))
-      });
-      List<LocationsHive> placeValues = [];
-      places.forEach((element) {
-        placeValues.add(LocationsHive(Intl.withLocale('ru_RU', () => element), element, false, []));
-      });
-      setState(
-      () {
-        searchItems = placeValues;
+      if (body['postalCodes'] != null) {
+        body['postalCodes'].forEach((element) => {
+          if(!places.contains(element['placeName'].replaceAll(RegExp(r'[^a-zA-Zа-яА-Я-.]'),'')))
+            places.add(element['placeName'].replaceAll(RegExp(r'[^a-zA-Zа-яА-Я-.]'),''))
+        });
+        for (var element in places) {
+          placeValues.add(LocationsHive(Intl.withLocale('ru_RU', () => element), element, false, []));
+        }
       }
-      );
-    } else {
-      print(response.statusCode);
-      return false;
     }
+    setState(() {
+      searchItems = placeValues;
+    });
   }
 
   @override
@@ -75,9 +77,11 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = NeumorphicTheme.currentTheme(context);
-    final baseColor = theme.baseColor;
-    final accentColor = theme.accentColor;
+    theme = NeumorphicTheme.currentTheme(context);
+    baseColor = theme.baseColor;
+    accentColor = theme.accentColor;
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -99,7 +103,7 @@ class _SearchPageState extends State<SearchPage> {
                     child: Row(
                       children: [
                         IconButton(
-                          onPressed: () => _toHomePage(context, ""),
+                          onPressed: () => _toHomePage(context, LocationsHive("","",false,[])),
                           icon: Icon(
                             Icons.keyboard_arrow_left,
                             size: 20,
@@ -129,7 +133,7 @@ class _SearchPageState extends State<SearchPage> {
                     ),
                   ),
                   SizedBox(
-                    height: 200,
+                    height: height * 300 / templateHeight,
                     child: ListView.builder(
                     itemCount: searchItems.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -137,7 +141,7 @@ class _SearchPageState extends State<SearchPage> {
                         onTap: () {
                           _toHomePage(
                               context,
-                              searchItems[index].locationName.toString()
+                              searchItems[index]
                           );
                         },
                         child: Container(
@@ -205,8 +209,9 @@ class _SearchPageState extends State<SearchPage> {
       )
     );
   }
-  void _toHomePage(BuildContext context , value) {
-    Navigator.pop(context, [value]);
+  Future<void> _toHomePage(BuildContext context , LocationsHive value) async {
+    if (value.locationName.isNotEmpty) await value.getName();
+    Navigator.pop(context, [value.locationName.toString()]);
   }
 }
 

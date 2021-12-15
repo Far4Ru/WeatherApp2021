@@ -101,7 +101,11 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: Text("No data"),
                             );
                           }
+                          // if (Hive.box<LocationsHive>('box_for_locations').values.where((element) => element.locationName == homeData.appSettings.location).isEmpty) {
+                          //   if (homeData.appSettings.location.isNotEmpty) Hive.box<LocationsHive>('box_for_locations').add(LocationsHive(homeData.appSettings.location, homeData.appSettings.location, false, []));
+                          // }
                           LocationsHive location = box.values.firstWhere((element) => element.locationName == homeData.appSettings.location);
+                          // location.update();
                           List<WeatherDayHive> day = location.weatherDays;
                           DateTime now = DateTime.now();
                           WeatherDayHive dayNow = WeatherDayHive(0, [], "");
@@ -350,7 +354,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           minWidth: width * 150 / templateWidth,
                                           height: height * 35 / templateHeight,
                                           child: OutlinedButton(
-                                            onPressed: () async => _toWeekPage(context, await homeData.appSettings.getLocation()),
+                                            onPressed: () async => _toWeekPage(context),
                                             child: Text('Прогноз на неделю', style: TextStyle(color: colors["toWeekButtonText"])),
                                             style: OutlinedButton.styleFrom(
                                               side: BorderSide(width: 1.5, color: (colors["toWeekButtonText"])!),
@@ -403,8 +407,9 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _toWeekPage(BuildContext context, String locationName) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => WeekPage(locationName: locationName)));
+  Future<void> _toWeekPage(BuildContext context) async {
+    await homeData.appSettings.getLocation();
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => WeekPage(homeData: homeData)));
   }
 
   Widget _buildVerticalCard(BuildContext context, WeatherDayHive details) {

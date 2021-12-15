@@ -25,6 +25,7 @@ class LocationsHive extends HiveObject {
   LocationsHive(this.name, this.locationName, this.favourite, this.weatherDays);
 
   Future<bool> update() async {
+    create();
     await _loadWeatherDays();
     if (locationName.isNotEmpty && !checkWeatherToday()) {
       final response = await http.get(Uri.parse(url + locationName + urlParams));
@@ -36,6 +37,11 @@ class LocationsHive extends HiveObject {
       }
     }
     return checkWeatherToday();
+  }
+
+  Future<String> getName() async {
+    await update();
+    return locationName;
   }
 
   bool checkWeatherToday() {
@@ -92,13 +98,22 @@ class LocationsHive extends HiveObject {
     _updateBox();
   }
 
-  favouriteChange() {
+  favouriteChange() async {
+    await update();
     favourite = !favourite;
     _updateBox();
   }
   _updateBox() {
     var _locationsBox = Hive.box<LocationsHive>('box_for_locations');
     _locationsBox.putAt(_locationsBox.values.toList().indexWhere((element) => element.locationName == locationName), LocationsHive(name, locationName, favourite, weatherDays));
+  }
+
+  check() {
+    return Hive.box<LocationsHive>('box_for_locations').values.where((element) => element.locationName == locationName).isEmpty;
+  }
+
+  create() {
+    if (check() && name.isNotEmpty && locationName.isNotEmpty) Hive.box<LocationsHive>('box_for_locations').add(LocationsHive(name, locationName, favourite, weatherDays));
   }
 }
 

@@ -5,13 +5,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:storyswiper/storyswiper.dart';
+import 'package:weather_app/data/data.dart';
 import 'package:weather_app/data/values.dart';
 import 'package:weather_app/models/locations.dart';
 import 'home.dart';
 
 class WeekPage extends StatefulWidget {
-  final String locationName;
-  const WeekPage({Key? key, required this.locationName}) : super(key: key);
+  HomeData homeData;
+  WeekPage({Key? key, required this.homeData}) : super(key: key);
 
   @override
   State<WeekPage> createState() => _WeekPageState();
@@ -25,6 +26,7 @@ class _WeekPageState extends State<WeekPage> {
   late DateFormat dateFormatShort;
   double width = 0;
   double height = 0;
+  String locationName = "";
 
   @override
   void initState() {
@@ -35,6 +37,7 @@ class _WeekPageState extends State<WeekPage> {
   @override
   Widget build(BuildContext context) {
     theme = NeumorphicTheme.currentTheme(context);
+    locationName = widget.homeData.appSettings.location;
     baseColor = theme.baseColor;
     accentColor = theme.accentColor;
     colors = NeumorphicTheme.of(context)!.isUsingDark ? colorsDark : colorsLight;
@@ -74,12 +77,12 @@ class _WeekPageState extends State<WeekPage> {
                 ValueListenableBuilder(
                   valueListenable: Hive.box<LocationsHive>('box_for_locations').listenable(),
                   builder: (context, Box<LocationsHive> box, _) {
-                    if (box.values.isEmpty && widget.locationName.isNotEmpty) {
+                    if (box.values.isEmpty && locationName.isNotEmpty) {
                       return const Center(
                         child: Text("No data"),
                       );
                     }
-                    LocationsHive location = box.values.firstWhere((element) => element.locationName == widget.locationName);
+                    LocationsHive location = box.values.firstWhere((element) => element.locationName == locationName);
                     List<WeatherDayHive> day = location.weatherDays;
                     DateTime now = DateTime.now();
                     List<WeatherDayHive> weekArray = [];
@@ -102,7 +105,7 @@ class _WeekPageState extends State<WeekPage> {
                       height: height * 387 / templateHeight,
                       child: StorySwiper.builder(
                         itemCount: displayWeekArray.length,
-                        aspectRatio: 320 / 387,
+                        aspectRatio: (width * 320 / templateWidth) / (height * 387 / templateHeight),
                         depthFactor: 0.2,
                         dx: 10,
                         dy: 10,
@@ -190,29 +193,29 @@ class _WeekPageState extends State<WeekPage> {
               Row(
                   children: [
                     Tab(icon: Image.asset(thermometer.icon, width:52, height:24,color: colors["text16"])),
-                    Text(thermometer.value, style: TextStyle(color: colors["textBase"])),
-                    Text(thermometer.unit, style: TextStyle(color: colors["text16"])),
+                    Text(widget.homeData.getValue("thermometer",double.parse(thermometer.value).round().toString(),thermometer.unit), style: TextStyle(color: colors["textBase"])),
+                    Text(widget.homeData.getUnit("thermometer", thermometer.unit), style: TextStyle(color: colors["text16"])),
                   ]
               ),
               Row(
                   children: [
                     Tab(icon: Image.asset(breeze.icon, width:52, height:24,color: colors["text16"])),
-                    Text(breeze.value, style: TextStyle(color: colors["textBase"])),
-                    Text(breeze.unit, style: TextStyle(color: colors["text16"])),
+                    Text(widget.homeData.getValue("breeze",double.parse(breeze.value).round().toString(),breeze.unit), style: TextStyle(color: colors["textBase"])),
+                    Text(widget.homeData.getUnit("breeze", breeze.unit), style: TextStyle(color: colors["text16"])),
                   ]
               ),
               Row(
                   children: [
                     Tab(icon: Image.asset(humidity.icon, width:52, height:24,color: colors["text16"])),
-                    Text(humidity.value, style: TextStyle(color: colors["textBase"])),
-                    Text(humidity.unit, style: TextStyle(color: colors["text16"])),
+                    Text(widget.homeData.getValue("humidity",double.parse(humidity.value).round().toString(),breeze.unit), style: TextStyle(color: colors["textBase"])),
+                    Text(widget.homeData.getUnit("humidity", humidity.unit), style: TextStyle(color: colors["text16"])),
                   ]
               ),
               Row(
                   children: [
                     Tab(icon: Image.asset(barometer.icon, width:52, height:24,color: colors["text16"])),
-                    Text(barometer.value, style: TextStyle(color: colors["textBase"])),
-                    Text(barometer.unit, style: TextStyle(color: colors["text16"])),
+                    Text(widget.homeData.getValue("barometer",double.parse(barometer.value).round().toString(),breeze.unit), style: TextStyle(color: colors["textBase"])),
+                    Text(widget.homeData.getUnit("barometer", barometer.unit), style: TextStyle(color: colors["text16"])),
                   ]
               ),
             ]
